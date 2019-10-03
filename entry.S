@@ -36,48 +36,63 @@
 /**************************************************/
 
 #define SAVE_ALL \
-      pushl %gs; \
-      pushl %fs; \
-      pushl %es; \
-      pushl %ds; \
-      pushl %eax; \
-      pushl %ebp; \
-      pushl %edi; \
-      pushl %esi; \
-      pushl %edx; \
-      pushl %ecx; \
-      pushl %ebx; \
-      movl $__KERNEL_DS, %edx;    \
-      movl %edx, %ds;           \
-      movl %edx, %es
+	pushl %gs; \
+	pushl %fs; \
+	pushl %es; \
+	pushl %ds; \
+	pushl %eax; \
+	pushl %ebp; \
+	pushl %edi; \
+	pushl %esi; \
+	pushl %edx; \
+	pushl %ecx; \
+	pushl %ebx; \
+	movl $__KERNEL_DS, %edx;    \
+	movl %edx, %ds;           \
+	movl %edx, %es
 
 #define RESTORE_ALL \
-	  popl %ebx; \
-	  popl %ecx; \
-	  popl %edx; \
-	  popl %esi; \
-	  popl %edi; \
-	  popl %ebp; \
-	  popl %eax; \
-	  popl %ds; \
-	  popl %es; \
-	  popl %fs; \
-	  popl %gs;
+	popl %ebx; \
+	popl %ecx; \
+	popl %edx; \
+	popl %esi; \
+	popl %edi; \
+	popl %ebp; \
+	popl %eax; \
+	popl %ds; \
+	popl %es; \
+	popl %fs; \
+	popl %gs;
 	
 #define EOI \
-	 movb $0x20, %al; \
-	 outb %al, $0x20 ;
+	movb $0x20, %al; \
+	outb %al, $0x20 ;
 
 ENTRY(keyboard_handler) \
-	 SAVE_ALL; \
-	 EOI; \
-	 call keyboard_routine; \
-	 RESTORE_ALL; \
-	 IRET;
-	 
+	SAVE_ALL; \
+	EOI; \
+	call keyboard_routine; \
+	RESTORE_ALL; \
+	IRET;
+
 ENTRY(clock_handler) \
-	 SAVE_ALL; \
-	 EOI; \
-	 call keyboard_routine; \
-	 RESTORE_ALL; \
-	 IRET;
+	SAVE_ALL; \
+	EOI; \
+	call clock_routine; \
+	RESTORE_ALL; \
+	IRET;
+
+ENTRY(system_call_handler) \
+	SAVE_ALL; \
+	cmpl $0, %eax; \ //Comprovem si está entre 0 i MAX_SYSCALL
+	jl error; \
+	cmpl $MAX_SYSCALL, %eax; \
+	jg error; \
+	call *sys_call_table(,%eax,0x04); \ //cridem la rutina
+	jmp end; \
+error: \
+	movl $-ENOSYS, %eax; \ //Si va malament, llencem error (reg ERRNO ¿?)
+end: \
+	movl %eax, 0x18(%esp); \ //Si tot va bé, está aqui el resultat de com ha anat.
+	RESTORE_ALL; \
+	IRET;
