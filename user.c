@@ -11,5 +11,9 @@ int __attribute__ ((__section__(".text.main")))
      /* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
 
     
+  int result = write(1, "hol", 3);
+ // if (result == -1){
+ // 	perror(errno);
+  //}
   while(1) { }
 }

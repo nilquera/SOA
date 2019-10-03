@@ -11,6 +11,5 @@ int sys_write_console(char *buffer,int size)
   
   for (i=0; i<size; i++)
     printc(buffer[i]);
-  
   return size;
 }

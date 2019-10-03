@@ -105,7 +105,3 @@ void keyboard_routine(){
 void clock_routine(){
 
 }
-
-int sys_write(){
-
-}

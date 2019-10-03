@@ -3,19 +3,24 @@
  */
 
 #include <asm.h>
+//include <libc.c>
 
-ENTRY(write) \
-	movl 8(%ebp), %ebx;	\
-	movl 12(%ebp), %ecx; \
-	movl 16(%ebp), %edx; \
-	movl $1, %eax; \
-	int $0x80; \
-	cmpl $0, %eax; \
-	jl error; \
+.global errno
 
-
-	jmp end; \
-error:
-
+ENTRY(write)
+	pushl %ebp
+	movl %esp, %ebp
+	movl 8(%ebp), %ebx
+	movl 12(%ebp), %ecx
+	movl 16(%ebp), %edx
+	movl $0x04, %eax
+	int $0x80
+	cmpl $0, %eax
+	jge end
+	neg  %eax
+    movl %eax, errno
+	movl $-1, %eax
 end:
-	ret;
+	movl %ebp, %esp
+	popl %ebp
+	ret
