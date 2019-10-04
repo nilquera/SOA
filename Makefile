@@ -83,7 +83,7 @@ io.o:io.c $(INCLUDEDIR)/io.h
 
 sched.o:sched.c $(INCLUDEDIR)/sched.h
 
-libc.o:libc.c $(INCLUDEDIR)/libc.h
+libc.o:libc.c $(INCLUDEDIR)/libc.h $(INCLUDEDIR)/errno.h
 
 mm.o:mm.c $(INCLUDEDIR)/types.h $(INCLUDEDIR)/mm.h
 
