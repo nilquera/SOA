@@ -7,6 +7,7 @@
 # 1 "msr.S"
 # 1 "include/asm.h" 1
 # 2 "msr.S" 2
+
 .globl writeMSR; .type writeMSR, @function; .align 0; writeMSR:
  pushl %ebp
  movl %esp, %ebp

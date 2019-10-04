@@ -85,25 +85,10 @@ ENTRY(clock_handler)
 // definim temporalment ENOSYS, que posteriorment estará a errno.h
 .globl ENOSYS
 ENOSYS = 78
-/*
-ENTRY(system_call_handler)
-	SAVE_ALL
-	cmpl $0, %eax
-	jl error
-	cmpl $MAX_SYSCALL, %eax
-	jg error
-	call *sys_call_table(,%eax,0x04)
-	jmp end
-error:
-	movl $-ENOSYS, %eax
-end:
-	movl %eax, 0x18(%esp)
-	RESTORE_ALL
-	iret
-*/
+
 ENTRY(syscall_handler_sysenter)
 	push $__USER_DS
-	push %EBP
+	push %ebp
 	pushfl
 	push $__USER_CS
 	push 4(%EBP)

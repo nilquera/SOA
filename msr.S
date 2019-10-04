@@ -1,4 +1,5 @@
 #include <asm.h>
+
 ENTRY(writeMSR)
 	pushl %ebp
 	movl %esp, %ebp

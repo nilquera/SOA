@@ -11,7 +11,7 @@
 
 # 1 "include/asm.h" 1
 # 6 "wrappers.S" 2
-
+# 40 "wrappers.S"
 .globl write; .type write, @function; .align 0; write:
  pushl %ebp
  movl %esp, %ebp
@@ -19,28 +19,16 @@
  movl 12(%ebp), %ecx
  movl 16(%ebp), %edx
  movl $0x4, %eax
- int $0x80
- cmpl $0, %eax
- jge end_write
- neg %eax
-    movl %eax, errno
- movl $-1, %eax
-end_write:
- movl %ebp, %esp
- popl %ebp
- ret
-
-.globl gettime; .type gettime, @function; .align 0; gettime:
+ pushl %edx
+ pushl %ecx
+ pushl next
  pushl %ebp
  movl %esp, %ebp
- movl $0xa, %eax
- int $0x80
- cmpl $0, %eax
- jge end_gettime
- neg %eax
-    movl %eax, errno
- movl $-1, %eax
-end_gettime:
+ sysenter
+next:
+ popl %ebp
+ subl 4, %esp
+ popl %ecx
+ popl %edx
  movl %ebp, %esp
  popl %ebp
- ret

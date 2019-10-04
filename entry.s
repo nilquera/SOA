@@ -31,10 +31,10 @@
 
 .globl ENOSYS
 ENOSYS = 78
-# 104 "entry.S"
+# 107 "entry.S"
 .globl syscall_handler_sysenter; .type syscall_handler_sysenter, @function; .align 0; syscall_handler_sysenter:
  push $0x2B
- push %EBP
+ push %ebp
  pushfl
  push $0x23
  push 4(%EBP)

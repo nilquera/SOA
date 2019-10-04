@@ -76,29 +76,17 @@ int __attribute__((__section__(".text.main")))
 
   printk("Kernel Loaded!    ");
 
-
   /* Initialize hardware data */
   setGdt(); /* Definicio de la taula de segments de memoria */
   setIdt(); /* Definicio del vector de interrupcions */
   setTSS(); /* Definicio de la TSS */
 
+  void writeMSR(int msr_name, long unsigned int address);
+  void syscall_handler_sysenter();
+
   writeMSR(0x174, __KERNEL_CS);
   writeMSR(0x175, INITIAL_ESP);
-
-
-
-
-
-  writeMSR(0x176, syscall_handler_sysenter);
-
-
-
-
-
-
-
-
-
+  writeMSR(0x176, (long unsigned int) syscall_handler_sysenter);
 
   /* Initialize Memory */
   init_mm();
