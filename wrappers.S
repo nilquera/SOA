@@ -40,15 +40,18 @@ end_gettime:
 ENTRY(write)
 	pushl %ebp
 	movl %esp, %ebp
-	pushl %edx
+	movl 8(%ebp), %ebx
+	movl 12(%ebp), %ecx
+	movl 16(%ebp), %edx
+	pushl %edx //no caldria
 	pushl %ecx
 	pushl next
 	pushl %ebp
 	movl %esp, %ebp
 	sysenter
 next:
-	movl %ebp, %esp
 	popl %ebp
+	popl
 	popl %ecx
 	popl %edx
 	movl %ebp, %esp
