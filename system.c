@@ -12,9 +12,8 @@
 #include <io.h>
 #include <utils.h>
 #include <zeos_mm.h> /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
+#include <stats.h> //necessari per zeos_ticks variable
 
-// Global definition. Extern declaration must be done in order to use in other source files
-int zeos_ticks;
 
 int (*usr_main)(void) = (void *) PH_USER_START;
 unsigned int *p_sys_size = (unsigned int *) KERNEL_START;

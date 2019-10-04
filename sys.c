@@ -13,10 +13,10 @@
 
 #include <sched.h>
 
+#include <stats.h> //necessari per zeos_ticks variable
+
 #define LECTURA 0
 #define ESCRIPTURA 1
-
-extern int zeos_ticks;
 
 int check_fd(int fd, int permissions)
 {
