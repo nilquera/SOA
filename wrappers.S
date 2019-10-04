@@ -10,13 +10,13 @@ ENTRY(gettime)
 	movl $0xa, %eax
 	pushl %edx
 	pushl %ecx
-	pushl next
+	pushl $next_gettime
 	pushl %ebp
 	movl %esp, %ebp
 	sysenter
-next:
+next_gettime:
 	popl %ebp
-	subl 4, %esp
+	subl $4, %esp
 	popl %ecx
 	popl %edx
 	cmpl $0, %eax
@@ -27,6 +27,7 @@ next:
 end_gettime:
 	movl %ebp, %esp
 	popl %ebp
+	ret
 
 ENTRY(write)
 	pushl %ebp
@@ -37,13 +38,13 @@ ENTRY(write)
 	movl $0x4, %eax
 	pushl %edx //no caldria
 	pushl %ecx
-	pushl next
+	pushl $next_write
 	pushl %ebp
 	movl %esp, %ebp
 	sysenter
-next:
+next_write:
 	popl %ebp
-	subl 4, %esp
+	subl $4, %esp
 	popl %ecx
 	popl %edx
 	cmpl $0, %eax
@@ -54,3 +55,4 @@ next:
 end_write:
 	movl %ebp, %esp
 	popl %ebp
+	ret

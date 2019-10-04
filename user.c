@@ -15,7 +15,6 @@ int __attribute__ ((__section__(".text.main")))
 		//perror();
 	}
 
-	for (int i = 0; i < 10000; ++i);
 	int time = gettime();
 
 	while(1){ }

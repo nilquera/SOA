@@ -31,7 +31,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fa034ec7010. after alignment, vector=0x7fa034ec8000
+00000000000i[MEM0  ] allocated memory at 0x7f5dfbf2c010. after alignment, vector=0x7f5dfbf2d000
 00000000000i[MEM0  ] 16,00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=16
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/opt/bochs_gdb/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Oct  4 20:12:18 2019 (time0=1570212738)
+00000000000i[CMOS  ] Setting initial clock to: Fri Oct  4 21:28:23 2019 (time0=1570217303)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -153,22 +153,6 @@
 00000000000i[GDBST ] addr 000000000000fff0 len 7
 00000000000i[XGUI  ] Mouse capture off
 00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 000000000000fff0 len 1
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 000000000000fff0 len 1
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 000000000000fff0 len 8
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 000000000000fff0 len 7
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 00000000001000c0 len 40
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 0000000000100100 len 40
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] addr 00000000001000f9 len 1
-00000000000i[XGUI  ] Mouse capture off
-00000000000i[GDBST ] Setting breakpoint at 00000000001000f9
-00000000000i[XGUI  ] Mouse capture off
 00000000000i[XGUI  ] Mouse capture off
 00000000000i[XGUI  ] Mouse capture off
 00000004661i[BIOS  ] $Revision: 12412 $ $Date: 2014-07-10 09:28:59 +0200 (Do, 10. Jul 2014) $
@@ -210,7 +194,7 @@
 00001529176i[BXVGA ] VBE known Display Interface b0c0
 00001529208i[BXVGA ] VBE known Display Interface b0c5
 00001532133i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002682464i[XGUI  ] charmap update. Font Height is 16
+00003154200i[XGUI  ] charmap update. Font Height is 16
 00014040191i[BIOS  ] Booting from 0000:7c00
 00029018415i[FLOPPY] partial read() on floppy image returns 160/512
 00029062859i[FLOPPY] read() on floppy image returns 0
@@ -260,37 +244,26 @@
 00031023646i[FLOPPY] read() on floppy image returns 0
 00031068090i[FLOPPY] read() on floppy image returns 0
 00031112534i[FLOPPY] read() on floppy image returns 0
-00031280165i[GDBST ] stopped with ac0
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[GDBST ] Removing breakpoint at 00000000001000f9
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[GDBST ] addr 00000000000115d8 len 1
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[GDBST ] addr 00000000000115c0 len 40
-00031280165i[XGUI  ] Mouse capture off
-00031280165i[XGUI  ] Mouse capture off
-00031280165p[GDBST ] >>PANIC<< Debugger asked us to quit
-00031280165i[CPU0  ] CPU is in protected mode (active)
-00031280165i[CPU0  ] CS.mode = 32 bit
-00031280165i[CPU0  ] SS.mode = 32 bit
-00031280165i[CPU0  ] EFER   = 0x00000000
-00031280165i[CPU0  ] | EAX=00000007  EBX=00108000  ECX=0011bfb8  EDX=04252b5d
-00031280165i[CPU0  ] | ESP=00015fe8  EBP=0011bfb8  ESI=000e0200  EDI=00003ff4
-00031280165i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-00031280165i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00031280165i[CPU0  ] |  CS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00031280165i[CPU0  ] |  DS:002b( 0005| 0|  3) 00000000 ffffffff 1 1
-00031280165i[CPU0  ] |  SS:0018( 0003| 0|  0) 00000000 ffffffff 1 1
-00031280165i[CPU0  ] |  ES:002b( 0005| 0|  3) 00000000 ffffffff 1 1
-00031280165i[CPU0  ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
-00031280165i[CPU0  ] |  GS:0000( 0000| 0|  0) 00000000 00000000 0 0
-00031280165i[CPU0  ] | EIP=000115d8 (04252b5d)
-00031280165i[CPU0  ] | CR0=0x80000011 CR2=0x04252b5d
-00031280165i[CPU0  ] | CR3=0x00028000 CR4=0x00000000
-00031280165i[CPU0  ] 0x04252b5d: (instruction unavailable) page not present
-00031280165i[CMOS  ] Last time is 1570212745 (Fri Oct  4 20:12:25 2019)
-00031280165i[XGUI  ] Exit
-00031280165i[      ] restoring default signal behavior
-00031280165i[SIM   ] quit_sim called with exit code 1
+00109382188p[      ] >>PANIC<< SIGNAL 2 caught
+00109382188i[CPU0  ] CPU is in protected mode (active)
+00109382188i[CPU0  ] CS.mode = 32 bit
+00109382188i[CPU0  ] SS.mode = 32 bit
+00109382188i[CPU0  ] EFER   = 0x00000000
+00109382188i[CPU0  ] | EAX=0000003f  EBX=00108000  ECX=0011bfc8  EDX=001000ef
+00109382188i[CPU0  ] | ESP=0011bfe0  EBP=0011bfe8  ESI=000e0200  EDI=00003ff4
+00109382188i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00109382188i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00109382188i[CPU0  ] |  CS:0023( 0004| 0|  3) 00000000 ffffffff 1 1
+00109382188i[CPU0  ] |  DS:002b( 0005| 0|  3) 00000000 ffffffff 1 1
+00109382188i[CPU0  ] |  SS:002b( 0005| 0|  3) 00000000 ffffffff 1 1
+00109382188i[CPU0  ] |  ES:002b( 0005| 0|  3) 00000000 ffffffff 1 1
+00109382188i[CPU0  ] |  FS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00109382188i[CPU0  ] |  GS:0000( 0000| 0|  0) 00000000 00000000 0 0
+00109382188i[CPU0  ] | EIP=00100027 (00100027)
+00109382188i[CPU0  ] | CR0=0x80000011 CR2=0x00000000
+00109382188i[CPU0  ] | CR3=0x00028000 CR4=0x00000000
+00109382188i[CPU0  ] 0x00100027>> jmp .-2 (0x00100027) : EBFE
+00109382188i[CMOS  ] Last time is 1570217330 (Fri Oct  4 21:28:50 2019)
+00109382188i[XGUI  ] Exit
+00109382188i[      ] restoring default signal behavior
+00109382188i[SIM   ] quit_sim called with exit code 1
