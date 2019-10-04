@@ -99,7 +99,7 @@ void keyboard_routine(){
 	if (port/128 == 0){
 		char ch = char_map[port&127];
     if (ch == '\0') ch = 'C';
-		else printc_xy(0, 0, ch);
+		printc_xy(0, 0, ch);
 	}
 }
 
