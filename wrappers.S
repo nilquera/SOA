@@ -13,11 +13,26 @@ ENTRY(write)
 	movl $0x4, %eax
 	int $0x80
 	cmpl $0, %eax
-	jge end
+	jge end_write
 	neg  %eax
     movl %eax, errno
 	movl $-1, %eax
-end:
+end_write:
+	movl %ebp, %esp
+	popl %ebp
+	ret
+
+ENTRY(gettime)
+	pushl %ebp
+	movl %esp, %ebp
+	movl $0xa, %eax
+	int $0x80
+	cmpl $0, %eax
+	jge end_gettime
+	neg  %eax
+    movl %eax, errno
+	movl $-1, %eax
+end_gettime:
 	movl %ebp, %esp
 	popl %ebp
 	ret

@@ -13,6 +13,8 @@
 #include <utils.h>
 #include <zeos_mm.h> /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
 
+// Global definition. Extern declaration must be done in order to use in other source files
+int zeos_ticks;
 
 int (*usr_main)(void) = (void *) PH_USER_START;
 unsigned int *p_sys_size = (unsigned int *) KERNEL_START;
@@ -99,6 +101,8 @@ int __attribute__((__section__(".text.main")))
   copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
 
   printk("Entering user mode...");
+
+  zeos_ticks = 0;
 
   enable_int(); 
   /*

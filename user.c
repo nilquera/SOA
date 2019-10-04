@@ -15,5 +15,7 @@ int __attribute__ ((__section__(".text.main")))
 		//perror();
 	}
 
+	int time = gettime();
+
 	while(1) { }
 }
