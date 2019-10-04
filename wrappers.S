@@ -3,7 +3,7 @@
  */
 
 #include <asm.h>
-
+/*
 ENTRY(write)
 	pushl %ebp
 	movl %esp, %ebp
@@ -21,8 +21,8 @@ end_write:
 	movl %ebp, %esp
 	popl %ebp
 	ret
-
-ENTRY(gettime)
+*/
+/*ENTRY(gettime)
 	pushl %ebp
 	movl %esp, %ebp
 	movl $0xa, %eax
@@ -36,3 +36,20 @@ end_gettime:
 	movl %ebp, %esp
 	popl %ebp
 	ret
+*/
+ENTRY(write)
+	pushl %ebp
+	movl %esp, %ebp
+	pushl %edx
+	pushl %ecx
+	pushl next
+	pushl %ebp
+	movl %esp, %ebp
+	sysenter
+next:
+	movl %ebp, %esp
+	popl %ebp
+	popl %ecx
+	popl %edx
+	movl %ebp, %esp
+	popl %ebp

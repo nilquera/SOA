@@ -14,8 +14,10 @@ int __attribute__ ((__section__(".text.main")))
 	if (write(1, "Escribe", 7) == -1){
 		//perror();
 	}
+	
 
-	int time = gettime();
-
-	while(1) { }
+	while(1) { 
+		if (gettime() == 1) write(1, "1", 1);
+		else if (gettime() == 2) write(1, "2", 1);
+	}
 }
