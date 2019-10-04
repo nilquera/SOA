@@ -47,10 +47,8 @@ void sys_exit()
 }
 
 int sys_write(int fd,char *buffer,int size){
-	int result = check_fd(fd, ESCRIPTURA);
-	if (result < 0) {
-		return result;
-	} else if (*buffer != NULL && size > 0){
-		return sys_write_console(buffer, size);
-	} else return -1;
+	int check = check_fd(fd, ESCRIPTURA);
+	if (check < 0) return check;
+	else if (*buffer == NULL || size <= 0) return -4; /*EINTR*/
+	else return sys_write_console(buffer, size);
 }

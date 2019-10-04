@@ -73,26 +73,30 @@ ENTRY(keyboard_handler)
 	EOI
 	call keyboard_routine
 	RESTORE_ALL
-	IRET
+	iret
 
 ENTRY(clock_handler)
 	SAVE_ALL
 	EOI
 	call clock_routine
 	RESTORE_ALL
-	IRET
+	iret
+
+// definim temporalment ENOSYS, que posteriorment estará a errno.h
+.globl ENOSYS
+ENOSYS = 78
 
 ENTRY(system_call_handler)
 	SAVE_ALL
-	//cmpl $0, %eax //Comprovem si está entre 0 i MAX_SYSCALL
-	//jl error
-	//cmpl $MAX_SYSCALL, %eax
-	//jg error
-	call *sys_call_table(,%eax,0x04) //cridem la rutina
+	cmpl $0, %eax
+	jl error
+	cmpl $MAX_SYSCALL, %eax
+	jg error
+	call *sys_call_table(,%eax,0x04)
 	jmp end
-//error:
-//	movl $-ENOSYS, %eax //Si va malament, llencem error (reg ERRNO ¿?)
+error:
+	movl $-ENOSYS, %eax
 end:
-	movl %eax, 0x18(%esp) //Si tot va bé, está aqui el resultat de com ha anat.
+	movl %eax, 0x18(%esp)
 	RESTORE_ALL
-	IRET
+	iret

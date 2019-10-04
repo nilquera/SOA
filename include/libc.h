@@ -18,6 +18,8 @@ int getpid();
 
 int fork();
 
+void perror();
+
 void exit();
 
 #endif  /* __LIBC_H__ */

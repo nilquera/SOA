@@ -3,9 +3,6 @@
  */
 
 #include <asm.h>
-//include <libc.c>
-
-.global errno
 
 ENTRY(write)
 	pushl %ebp
@@ -13,7 +10,7 @@ ENTRY(write)
 	movl 8(%ebp), %ebx
 	movl 12(%ebp), %ecx
 	movl 16(%ebp), %edx
-	movl $0x04, %eax
+	movl $0x4, %eax
 	int $0x80
 	cmpl $0, %eax
 	jge end

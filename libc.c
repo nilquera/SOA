@@ -3,7 +3,6 @@
  */
 
 #include <libc.h>
-
 #include <types.h>
 
 int errno;
@@ -42,3 +41,10 @@ int strlen(char *a)
   
   return i;
 }
+
+/*Printa por pantalla el error contenido en errno
+  indexando en la matriz */
+/* void perror(){ 
+  char *err_str = err_map[errno];
+  write(1, err_str, strlen(err_str));
+} */
