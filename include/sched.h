@@ -12,11 +12,15 @@
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
 
+struct list_head freequeue;
+struct list_head readyqueue;
+
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 
 struct task_struct {
   int PID;			/* Process ID. This MUST be the first field of the struct. */
   page_table_entry * dir_pages_baseAddr;
+  struct list_head list;
 };
 
 union task_union {
@@ -38,6 +42,9 @@ void init_idle(void);
 
 void init_sched(void);
 
+void init_freequeue(void);
+void init_readyqueue(void);
+
 struct task_struct * current();
 
 void task_switch(union task_union*t);
@@ -55,5 +62,6 @@ void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
+
 
 #endif  /* __SCHED_H__ */
