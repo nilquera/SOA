@@ -1,131 +1,151 @@
-#ifndef __ERRNO_H__
-#define __ERRNO_H__
+/*
+ * Copyright (c) 2013 Corey Tabaka
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files
+ * (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+#ifndef __ERRNO_H
+#define __ERRNO_H
 
-char *error_map[] = {
-	"EPERM\n",	/* Not super-user */
-	"ENOENT\n",	/* No such file or directory */
-	"ESRCH\n",	/* No such process */
-	"EINTR\n",	/* Interrupted system call */
-	"EIO\n",		/* I/O error */
-	"ENXIO\n",	/* No such device or address */
-	"E2BIG\n",	/* Arg list too long */
-	"ENOEXEC\n",	/* Exec format error */
-	"EBADF\n",	/* Bad file number */
-	"ECHILD\n",	/* No children */
-	"EAGAIN\n",	/* No more processes */
-	"ENOMEM\n",	/* Not enough core */
-	"EACCES\n",	/* Permission denied */
-	"EFAULT\n",	/* Bad address */
-	"ENOTBLK\n",	/* Block device required */
-	"EBUSY\n",	/* Mount device busy */
-	"EEXIST\n",	/* File exists */
-	"EXDEV\n",	/* Cross-device link */
-	"ENODEV\n",	/* No such device */
-	"ENOTDIR\n",	/* Not a directory */
-	"EISDIR\n",	/* Is a directory */
-	"EINVAL\n",	/* Invalid argument */
-	"ENFILE\n",	/* Too many open files in system */
-	"EMFILE\n",	/* Too many open files */
-	"ENOTTY\n",	/* Not a typewriter */
-	"ETXTBSY\n",	/* Text file busy */
-	"EFBIG\n",	/* File too large */
-	"ENOSPC\n",	/* No space left on device */
-	"ESPIPE\n",	/* Illegal seek */
-	"EROFS\n",	/* Read only file system */
-	"EMLINK\n",	/* Too many links */
-	"EPIPE\n",	/* Broken pipe */
-	"EDOM\n",		/* Math arg out of domain of func */
-	"ERANGE\n",	/* Math result not representable */
-	"ENOMSG\n",	/* No message of desired type */
-	"EIDRM\n",	/* Identifier removed */
-	"ECHRNG\n",	/* Channel number out of range */
-	"EL2NSYNC\n",	/* Level 2 not synchronized */
-	"EL3HLT\n",	/* Level 3 halted */
-	"EL3RST\n",	/* Level 3 reset */
-	"ELNRNG\n",	/* Link number out of range */
-	"EUNATCH\n",	/* Protocol driver not attached */
-	"ENOCSI\n",	/* No CSI structure available */
-	"EL2HLT\n",	/* Level 2 halted */
-	"EDEADLK\n",	/* Deadlock condition */
-	"ENOLCK\n",	/* No record locks available */
-	"EBADE\n",	/* Invalid exchange */
-	"EBADR\n",	/* Invalid request descriptor */
-	"EXFULL\n",	/* Exchange full */
-	"ENOANO\n",	/* No anode */
-	"EBADRQC\n",	/* Invalid request code */
-	"EBADSLT\n",	/* Invalid slot */
-	"EDEADLOCK\n",/* File locking deadlock error */
-	"EBFONT\n",	/* Bad font file fmt */
-	"ENOSTR\n",	/* Device not a stream */
-	"ENODATA\n",	/* No data (for no delay io) */
-	"ETIME\n",	/* Timer expired */
-	"ENOSR\n",	/* Out of streams resources */
-	"ENONET\n",	/* Machine is not on the network */
-	"ENOPKG\n",	/* Package not installed */
-	"EREMOTE\n",	/* The object is remote */
-	"ENOLINK\n",	/* The link has been severed */
-	"EADV\n",		/* Advertise error */
-	"ESRMNT\n",	/* Srmount error */
-	"ECOMM\n",	/* Communication error on send */
-	"EPROTO\n",	/* Protocol error */
-	"EMULTIHOP\n",/* Multihop attempted */
-	"ELBIN\n",	/* Inode is remote (not really error) */
-	"EDOTDOT\n",	/* Cross mount point (not really error) */
-	"EBADMSG\n",	/* Trying to read unreadable message */
-	"EFTYPE\n",	/* Inappropriate file type or format */
-	"ENOTUNIQ\n",	/* Given log. name not unique */
-	"EBADFD\n",	/* f.d. invalid for this operation */
-	"EREMCHG\n",	/* Remote address changed */
-	"ELIBACC\n",	/* Can't access a needed shared lib */
-	"ELIBBAD\n",	/* Accessing a corrupted shared lib */
-	"ELIBSCN\n",	/* .lib section in a.out corrupted */
-	"ELIBMAX\n",	/* Attempting to link in too many libs */
-	"ELIBEXEC\n",	/* Attempting to exec a shared library */
-	"ENOSYS\n",	/* Function not implemented */
-	"ENMFILE\n",	/* No more files */
-	"ENOTEMPTY\n",	/* Directory not empty */
-	"ENAMETOOLONG\n",	/* File or path name too long */
-	"ELOOP\n",	/* Too many symbolic links */
-	"EOPNOTSUPP\n",	/* Operation not supported on transport endpoint */
-	"EPFNOSUPPORT\n",	/* Protocol family not supported */
-	"ECONNRESET\n",	/* Connection reset by peer */
-	"ENOBUFS\n",	/* No buffer space available */
-	"EAFNOSUPPORT\n",	/* Address family not supported by protocol family */
-	"EPROTOTYPE\n",	/* Protocol wrong type for socket */
-	"ENOTSOCK\n",	/* Socket operation on non-socket */
-	"ENOPROTOOPT\n",	/* Protocol not available */
-	"ESHUTDOWN\n",	/* Can't send after socket shutdown */
-	"ECONNREFUSED\n",	/* Connection refused */
-	"EADDRINUSE\n",	/* Address already in use */
-	"ECONNABORTED\n",	/* Connection aborted */
-	"ENETUNREACH\n",	/* Network is unreachable */
-	"ENETDOWN\n",	/* Network interface is not configured */
-	"ETIMEDOUT\n",	/* Connection timed out */
-	"EHOSTDOWN\n",	/* Host is down */
-	"EHOSTUNREACH\n",	/* Host is unreachable */
-	"EINPROGRESS\n",	/* Connection already in progress */
-	"EALREADY\n",	/* Socket already connected */
-	"EDESTADDRREQ\n",	/* Destination address required */
-	"EMSGSIZE\n",	/* Message too long */
-	"EPROTONOSUPPORT\n",	/* Unknown protocol */
-	"ESOCKTNOSUPPORT\n",	/* Socket type not supported */
-	"EADDRNOTAVAIL\n",	/* Address not available */
-	"ENETRESET\n",
-	"EISCONN\n",	/* Socket is already connected */
-	"ENOTCONN\n",	/* Socket is not connected */
-	"ETOOMANYREFS\n",
-	"EPROCLIM\n",
-	"EUSERS\n",
-	"EDQUOT\n",
-	"ESTALE\n",
-	"ENOTSUP\n",	/* Not supported */
-	"ENOMEDIUM\n",	/* No medium (in tape drive) */
-	"ENOSHARE\n",	/* No such host or network path */
-	"ECASECLASH\n",	/* Filename exists with different case */
-	"EILSEQ\n",
-	"EOVERFLOW\n",	/* Value too large for defined data type */
-	"EWOULDBLOCK EAGAIN\n",	/* Operation would block */
-	"__ELASTERROR"	/* Users can add values starting here */
-};
+#define	EPERM 1		/* Not super-user */
+#define	ENOENT 2	/* No such file or directory */
+#define	ESRCH 3		/* No such process */
+#define	EINTR 4		/* Interrupted system call */
+#define	EIO 5		/* I/O error */
+#define	ENXIO 6		/* No such device or address */
+#define	E2BIG 7		/* Arg list too long */
+#define	ENOEXEC 8	/* Exec format error */
+#define	EBADF 9		/* Bad file number */
+#define	ECHILD 10	/* No children */
+#define	EAGAIN 11	/* No more processes */
+#define	ENOMEM 12	/* Not enough core */
+#define	EACCES 13	/* Permission denied */
+#define	EFAULT 14	/* Bad address */
+#define	ENOTBLK 15	/* Block device required */
+#define	EBUSY 16	/* Mount device busy */
+#define	EEXIST 17	/* File exists */
+#define	EXDEV 18	/* Cross-device link */
+#define	ENODEV 19	/* No such device */
+#define	ENOTDIR 20	/* Not a directory */
+#define	EISDIR 21	/* Is a directory */
+#define	EINVAL 22	/* Invalid argument */
+#define	ENFILE 23	/* Too many open files in system */
+#define	EMFILE 24	/* Too many open files */
+#define	ENOTTY 25	/* Not a typewriter */
+#define	ETXTBSY 26	/* Text file busy */
+#define	EFBIG 27	/* File too large */
+#define	ENOSPC 28	/* No space left on device */
+#define	ESPIPE 29	/* Illegal seek */
+#define	EROFS 30	/* Read only file system */
+#define	EMLINK 31	/* Too many links */
+#define	EPIPE 32	/* Broken pipe */
+#define	EDOM 33		/* Math arg out of domain of func */
+#define	ERANGE 34	/* Math result not representable */
+#define	ENOMSG 35	/* No message of desired type */
+#define	EIDRM 36	/* Identifier removed */
+#define	ECHRNG 37	/* Channel number out of range */
+#define	EL2NSYNC 38	/* Level 2 not synchronized */
+#define	EL3HLT 39	/* Level 3 halted */
+#define	EL3RST 40	/* Level 3 reset */
+#define	ELNRNG 41	/* Link number out of range */
+#define	EUNATCH 42	/* Protocol driver not attached */
+#define	ENOCSI 43	/* No CSI structure available */
+#define	EL2HLT 44	/* Level 2 halted */
+#define	EDEADLK 45	/* Deadlock condition */
+#define	ENOLCK 46	/* No record locks available */
+#define EBADE 50	/* Invalid exchange */
+#define EBADR 51	/* Invalid request descriptor */
+#define EXFULL 52	/* Exchange full */
+#define ENOANO 53	/* No anode */
+#define EBADRQC 54	/* Invalid request code */
+#define EBADSLT 55	/* Invalid slot */
+#define EDEADLOCK 56	/* File locking deadlock error */
+#define EBFONT 57	/* Bad font file fmt */
+#define ENOSTR 60	/* Device not a stream */
+#define ENODATA 61	/* No data (for no delay io) */
+#define ETIME 62	/* Timer expired */
+#define ENOSR 63	/* Out of streams resources */
+#define ENONET 64	/* Machine is not on the network */
+#define ENOPKG 65	/* Package not installed */
+#define EREMOTE 66	/* The object is remote */
+#define ENOLINK 67	/* The link has been severed */
+#define EADV 68		/* Advertise error */
+#define ESRMNT 69	/* Srmount error */
+#define	ECOMM 70	/* Communication error on send */
+#define EPROTO 71	/* Protocol error */
+#define	EMULTIHOP 74	/* Multihop attempted */
+#define	ELBIN 75	/* Inode is remote (not really error) */
+#define	EDOTDOT 76	/* Cross mount point (not really error) */
+#define EBADMSG 77	/* Trying to read unreadable message */
+#define EFTYPE 79	/* Inappropriate file type or format */
+#define ENOTUNIQ 80	/* Given log. name not unique */
+#define EBADFD 81	/* f.d. invalid for this operation */
+#define EREMCHG 82	/* Remote address changed */
+#define ELIBACC 83	/* Can't access a needed shared lib */
+#define ELIBBAD 84	/* Accessing a corrupted shared lib */
+#define ELIBSCN 85	/* .lib section in a.out corrupted */
+#define ELIBMAX 86	/* Attempting to link in too many libs */
+#define ELIBEXEC 87	/* Attempting to exec a shared library */
+#define ENOSYS 88	/* Function not implemented */
+#define ENMFILE 89      /* No more files */
+#define ENOTEMPTY 90	/* Directory not empty */
+#define ENAMETOOLONG 91	/* File or path name too long */
+#define ELOOP 92	/* Too many symbolic links */
+#define EOPNOTSUPP 95	/* Operation not supported on transport endpoint */
+#define EPFNOSUPPORT 96 /* Protocol family not supported */
+#define ECONNRESET 104  /* Connection reset by peer */
+#define ENOBUFS 105	/* No buffer space available */
+#define EAFNOSUPPORT 106 /* Address family not supported by protocol family */
+#define EPROTOTYPE 107	/* Protocol wrong type for socket */
+#define ENOTSOCK 108	/* Socket operation on non-socket */
+#define ENOPROTOOPT 109	/* Protocol not available */
+#define ESHUTDOWN 110	/* Can't send after socket shutdown */
+#define ECONNREFUSED 111	/* Connection refused */
+#define EADDRINUSE 112		/* Address already in use */
+#define ECONNABORTED 113	/* Connection aborted */
+#define ENETUNREACH 114		/* Network is unreachable */
+#define ENETDOWN 115		/* Network interface is not configured */
+#define ETIMEDOUT 116		/* Connection timed out */
+#define EHOSTDOWN 117		/* Host is down */
+#define EHOSTUNREACH 118	/* Host is unreachable */
+#define EINPROGRESS 119		/* Connection already in progress */
+#define EALREADY 120		/* Socket already connected */
+#define EDESTADDRREQ 121	/* Destination address required */
+#define EMSGSIZE 122		/* Message too long */
+#define EPROTONOSUPPORT 123	/* Unknown protocol */
+#define ESOCKTNOSUPPORT 124	/* Socket type not supported */
+#define EADDRNOTAVAIL 125	/* Address not available */
+#define ENETRESET 126
+#define EISCONN 127		/* Socket is already connected */
+#define ENOTCONN 128		/* Socket is not connected */
+#define ETOOMANYREFS 129
+#define EPROCLIM 130
+#define EUSERS 131
+#define EDQUOT 132
+#define ESTALE 133
+#define ENOTSUP 134		/* Not supported */
+#define ENOMEDIUM 135   /* No medium (in tape drive) */
+#define ENOSHARE 136    /* No such host or network path */
+#define ECASECLASH 137  /* Filename exists with different case */
+#define EILSEQ 138
+#define EOVERFLOW 139	/* Value too large for defined data type */
+#define EWOULDBLOCK EAGAIN	/* Operation would block */
+#define __ELASTERROR 2000	/* Users can add values starting here */
 
 #endif

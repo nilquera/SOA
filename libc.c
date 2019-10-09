@@ -43,9 +43,12 @@ int strlen(char *a)
   return i;
 }
 
-/*Printa por pantalla el error contenido en errno
-  indexando en la matriz */
+/*Printa por pantalla el error contenido en errno*/
+/*Com tinc acces a la variable errno desde qualsevol arxiu si està declarada al .c i no al .h?*/
 void perror(){ 
-  char *err_str = error_map[errno+1];
-  write(1, err_str, strlen(err_str));
+  if (errno == EBADF) write(1, "Bad file number\n", 16);
+  else if (errno == EACCES) write(1, "Permission denied\n", 18);
+  else if (errno == ENOSYS) write (1, "Function not implemented\n", 25);
+  else if (errno == EINTR) write (1, "Interrupted system call\n", 24);
+  else write (1, "Undefined error\n", 16); 
 }
