@@ -65,7 +65,10 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-
+	task_struct free_ts = list_head_to_task_struct(list_first(freequeue));
+	free_ts.PID = 0;
+	page_table_entry *pte = allocate_DIR(free_ts);
+	//4)
 }
 
 void init_task1(void)
@@ -103,7 +106,7 @@ struct task_struct* current()
   return (struct task_struct*)(ret_value&0xfffff000);
 }
 
-
+// modificar inner_task_switch_asm i fer servir current()
 void inner_task_switch(union task_union *new){
 	tss.esp0 = (new->task).kernel_ebp;
 	writeMSR(0x175, tss.esp0);
