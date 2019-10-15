@@ -6,6 +6,9 @@
 #include <mm.h>
 #include <io.h>
 
+void inner_task_switch_asm(union task_union *new);
+void writeMSR(int msr_name, long unsigned int address);
+
 union task_union task[NR_TASKS]
   __attribute__((__section__(".data.task")));
 
@@ -98,5 +101,13 @@ struct task_struct* current()
 	: "=g" (ret_value)
   );
   return (struct task_struct*)(ret_value&0xfffff000);
+}
+
+
+void inner_task_switch(union task_union *new){
+	tss.esp0 = (new->task).kernel_ebp;
+	writeMSR(0x175, tss.esp0);
+	set_cr3((new->task).dir_pages_baseAddr);
+	inner_task_switch_asm(new);
 }
 
