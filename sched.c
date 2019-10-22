@@ -21,6 +21,8 @@ struct task_struct *list_head_to_task_struct(struct list_head *l)
 
 extern struct list_head blocked;
 
+struct task_struct *idle_task;
+
 
 /* get_DIR - Returns the Page Directory address for task 't' */
 page_table_entry * get_DIR (struct task_struct *t) 
@@ -65,14 +67,37 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-	task_struct free_ts = list_head_to_task_struct(list_first(freequeue));
-	free_ts.PID = 0;
-	page_table_entry *pte = allocate_DIR(free_ts);
-	//4)
+	struct task_struct *free_ts = list_head_to_task_struct(list_first(&freequeue));
+	free_ts->PID = 0;
+
+	//page_table_entry *pte = allocate_DIR(free_ts);
+	allocate_DIR(free_ts);
+
+	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
+	//free_ts->kernel_ebp=(unsigned long *) ((unsigned long)free_ts|(unsigned long)4095);
+
+	*(free_ts->kernel_ebp)=(unsigned long) &cpu_idle;
+
+	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-2]);
+	//free_ts->kernel_ebp-=4;
+
+	*(free_ts->kernel_ebp)=0;
 }
 
 void init_task1(void)
 {
+	struct task_struct *free_ts = list_head_to_task_struct(list_first(&freequeue));
+	free_ts->PID = 1;
+
+	allocate_DIR(free_ts);
+
+	set_user_pages(free_ts);
+
+	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]); //apunta abaix
+
+	tss.esp0 = (unsigned long)free_ts->kernel_ebp;
+	writeMSR(0x175, tss.esp0);
+	set_cr3(free_ts->dir_pages_baseAddr);
 }
 
 void init_freequeue()
@@ -108,7 +133,7 @@ struct task_struct* current()
 
 // modificar inner_task_switch_asm i fer servir current()
 void inner_task_switch(union task_union *new){
-	tss.esp0 = (new->task).kernel_ebp;
+	tss.esp0 = (unsigned long)(new->task).kernel_ebp;
 	writeMSR(0x175, tss.esp0);
 	set_cr3((new->task).dir_pages_baseAddr);
 	inner_task_switch_asm(new);

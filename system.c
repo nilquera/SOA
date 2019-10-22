@@ -92,15 +92,22 @@ int __attribute__((__section__(".text.main")))
 
 /* Initialize an address space to be used for the monoprocess version of ZeOS */
 
-  monoprocess_init_addr_space(); /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
+  //monoprocess_init_addr_space(); /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
 
   /* Initialize Scheduling */
+  printk("HOLA_SCHED");
   init_sched();
 
+
+  printk("HOLA_IDLE");
   /* Initialize idle task  data */
   init_idle();
+
+  printk("HOLA_TASK1");
   /* Initialize task 1 data */
   init_task1();
+
+  printk("HOLA_TASK1_despres");
 
   /* Move user code/data now (after the page table initialization) */
   copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);

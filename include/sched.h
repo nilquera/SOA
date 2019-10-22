@@ -18,7 +18,7 @@ struct list_head readyqueue;
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 
 struct task_struct {
-  unsigned long kernel_ebp;
+  unsigned long *kernel_ebp;
   int PID;			/* Process ID. This MUST be the first field of the struct. */
   page_table_entry * dir_pages_baseAddr;
   struct list_head list;

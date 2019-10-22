@@ -1,8 +1,4 @@
-
-
 #include <asm.h>
-
-
 
 ENTRY(inner_task_switch_asm)
 	pushl %ebp
@@ -32,3 +28,6 @@ ENTRY(task_switch)
 	movl %ebp, %esp
 	popl %ebp
 
+ENTRY(init_idle_switch)
+	pushl cpu_idle
+	pushl $0
