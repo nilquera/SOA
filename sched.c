@@ -56,7 +56,7 @@ struct task_struct *list_head_to_task_struct(struct list_head *l){
 void cpu_idle(void)
 {
 	__asm__ __volatile__("sti": : :"memory");
-
+	printk("ESTIC A IDLE!!!!");
 	while(1)
 	{
 	;
@@ -65,12 +65,15 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-	struct task_struct *free_ts = list_head_to_task_struct(list_first(&freequeue));
+ 	struct list_head *first_elem = list_first(&freequeue);
+	list_del(first_elem); // hay que quitar el list_head de la freequeue, sino el init pilla el mismo
+
+	struct task_struct *free_ts = list_head_to_task_struct(first_elem);
 	free_ts->PID = 0;
 
 	// Allocate an empty DIR for the free_ts
 	// page_table_entry *pte = allocate_DIR(free_ts);
-	allocate_DIR(free_ts);
+	free_ts->dir_pages_baseAddr = allocate_DIR(free_ts);
 
 	// Get address of stack
 	union task_union *free_tu = (union task_union *)free_ts; //cast free_ts to task_union pointer
@@ -101,10 +104,13 @@ void init_idle (void)
 
 void init_task1(void)
 {
-	struct task_struct *free_ts = list_head_to_task_struct(list_first(&freequeue));
+	struct list_head *first_elem = list_first(&freequeue);
+	list_del(first_elem);
+
+	struct task_struct *free_ts = list_head_to_task_struct(first_elem);
 	free_ts->PID = 1;
 
-	allocate_DIR(free_ts);
+	free_ts->dir_pages_baseAddr = allocate_DIR(free_ts);
 	set_user_pages(free_ts);
 
 	//no diu a la guia que s'hagi de fer això

@@ -6,11 +6,10 @@ ENTRY(inner_task_switch_asm)
 	movl $0xFFFFF000, %ebx
 	and %esp, %ebx
 	movl %ebp, (%ebx) # 1) guarda ebp en kernel_ebp
-	movl 8(%ebp), %esp # 2) enchufa el kernel_ebp 
-	movl 0(%esp), %esp #	de new a esp
-	#movl %ebp, %esp
-	popl %ebp
-	ret
+	movl 8(%ebp), %esp # 2) Enchufa el kernel_ebp de new a esp
+	movl 0(%esp), %esp #	+
+	popl %ebp 		   #	Cambia de pila de sistema :)
+	ret	
 
 
 ENTRY(task_switch)
@@ -29,6 +28,7 @@ ENTRY(task_switch)
 	popl %ebp
 	ret
 
+## crec que això s'ha de borrar
 ENTRY(init_idle_switch)
 	pushl cpu_idle
 	pushl $0
