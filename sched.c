@@ -87,7 +87,7 @@ void init_idle (void)
 	free_ts->kernel_ebp = &stack[KERNEL_STACK_SIZE-2];
 
 	// Initialize idle_task
-	idle_task = free_ts;
+	idle_task = free_tu;
 
 	/*
 		free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
