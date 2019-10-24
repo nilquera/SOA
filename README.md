@@ -8,7 +8,7 @@
 
 2. Fer els canvis que vulguis als fitxers
 
-3. Un cop fets els canvis s'ha de guardar aka fer commit. Es fa en dos passos: add + commit:
+3. Un cop fets els canvis s'ha de fer commit. Es fa en dos passos: add + commit:
 
 ```git add .``` --> Prepara tots(.) els fitxers canviats per a ser commitejats.
 
