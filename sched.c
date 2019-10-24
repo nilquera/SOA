@@ -70,9 +70,22 @@ void init_idle (void)
 	struct task_struct *free_ts = list_head_to_task_struct(list_first(&freequeue));
 	free_ts->PID = 0;
 
-	//page_table_entry *pte = allocate_DIR(free_ts);
+	// Allocate an empty DIR for the free_ts
+	// page_table_entry *pte = allocate_DIR(free_ts);
 	allocate_DIR(free_ts);
 
+	// Get address of stack
+	union task_union *free_tu = (union task_union *)free_ts; //cast free_ts to task_union pointer
+	unsigned long *stack = free_tu->stack; //get a copy of (address of) stack
+
+	// Put address of cpu_idle and fake ebp (0) at the bottom of the stack
+	stack[KERNEL_STACK_SIZE-2] = 0;
+	stack[KERNEL_STACK_SIZE-1] = (unsigned long) &cpu_idle;
+
+	// Point free_ts' kernel_ebp to the position of the fake ebp.
+	free_ts->kernel_ebp = &stack[KERNEL_STACK_SIZE-2];
+
+/*
 	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
 	//free_ts->kernel_ebp=(unsigned long *) ((unsigned long)free_ts|(unsigned long)4095);
 
@@ -82,6 +95,7 @@ void init_idle (void)
 	//free_ts->kernel_ebp-=4;
 
 	*(free_ts->kernel_ebp)=0;
+*/
 }
 
 void init_task1(void)
