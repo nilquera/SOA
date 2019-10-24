@@ -3,11 +3,11 @@
 ENTRY(inner_task_switch_asm)
 	pushl %ebp
 	movl %esp, %ebp
-	movl 0xFFFFF000, %ebx
+	movl $0xFFFFF000, %ebx
 	and %esp, %ebx
-	movl %ebp, (%ebx) #guarda ebp en kernel_ebp
-	movl 8(%ebp), %esp
-	movl 0(%esp), %esp #enchufa el kernel_esp de new a esp
+	movl %ebp, (%ebx) # 1) guarda ebp en kernel_ebp
+	movl 8(%ebp), %esp # 2) enchufa el kernel_ebp 
+	movl 0(%esp), %esp #	de new a esp
 	movl %ebp, %esp
 	popl %ebp
 	ret

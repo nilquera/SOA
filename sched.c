@@ -21,8 +21,6 @@ struct task_struct *list_head_to_task_struct(struct list_head *l)
 
 extern struct list_head blocked;
 
-struct task_struct *idle_task;
-
 
 /* get_DIR - Returns the Page Directory address for task 't' */
 page_table_entry * get_DIR (struct task_struct *t) 
@@ -85,17 +83,20 @@ void init_idle (void)
 	// Point free_ts' kernel_ebp to the position of the fake ebp.
 	free_ts->kernel_ebp = &stack[KERNEL_STACK_SIZE-2];
 
-/*
-	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
-	//free_ts->kernel_ebp=(unsigned long *) ((unsigned long)free_ts|(unsigned long)4095);
+	// Initialize idle_task
+	idle_task = free_ts;
 
-	*(free_ts->kernel_ebp)=(unsigned long) &cpu_idle;
+	/*
+		free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
+		//free_ts->kernel_ebp=(unsigned long *) ((unsigned long)free_ts|(unsigned long)4095);
 
-	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-2]);
-	//free_ts->kernel_ebp-=4;
+		*(free_ts->kernel_ebp)=(unsigned long) &cpu_idle;
 
-	*(free_ts->kernel_ebp)=0;
-*/
+		free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-2]);
+		//free_ts->kernel_ebp-=4;
+
+		*(free_ts->kernel_ebp)=0;
+	*/
 }
 
 void init_task1(void)
@@ -104,9 +105,12 @@ void init_task1(void)
 	free_ts->PID = 1;
 
 	allocate_DIR(free_ts);
-
 	set_user_pages(free_ts);
 
+	//no diu a la guia que s'hagi de fer això
+	//suposo que quan es fanci un switch de init a un altre process
+	//... el kernel_ebp es modifica al final, per tant és igual el que valgui al principi 
+	//... El kernel_ebp serveix per ENTRAR a la CPU, però init la primera vegada no entra amb task_switch
 	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]); //apunta abaix
 
 	tss.esp0 = (unsigned long)free_ts->kernel_ebp;

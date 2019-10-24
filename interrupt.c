@@ -13,6 +13,10 @@
 Gate idt[IDT_ENTRIES];
 Register    idtR;
 
+
+//temp
+#include <sched.h>
+
 char char_map[] =
 {
   '\0','\0','1','2','3','4','5','6',
@@ -95,6 +99,8 @@ void setIdt()
 }
 
 void keyboard_routine(){
+  task_switch((union task_union *)idle_task);
+
 	unsigned char port = inb(0x60);
 	if (port/128 == 0){
 		char ch = char_map[port&127];

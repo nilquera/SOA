@@ -14,6 +14,7 @@
 
 struct list_head freequeue;
 struct list_head readyqueue;
+struct task_struct *idle_task;
 
 enum state_t { ST_RUN, ST_READY, ST_BLOCKED };
 

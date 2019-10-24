@@ -59,6 +59,9 @@ __asm__ __volatile__(
 
 void return_gate(Word ds, Word ss, DWord esp, Word cs, DWord eip)
 {
+  // crec que es com si posessim el context hw de init
+  // i al cridar iret s'omple la cpu amb context init
+  // i se li passa el control, que és a privilegis reduits
   __asm__ __volatile__ (
     "mov %0,%%es\n\t"
     "mov %0,%%ds\n\t"
