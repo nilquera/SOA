@@ -2,7 +2,8 @@
 
 ## instruccions git
 
-1. Descarregar el codi al teu pc
+1. Descarregar el codi al teu pc:
+
 ```git clone https://github.com/nilquera/SOA.git```
 
 2. Fer els canvis que vulguis als fitxers
