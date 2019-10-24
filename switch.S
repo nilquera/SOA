@@ -8,7 +8,7 @@ ENTRY(inner_task_switch_asm)
 	movl %ebp, (%ebx) # 1) guarda ebp en kernel_ebp
 	movl 8(%ebp), %esp # 2) enchufa el kernel_ebp 
 	movl 0(%esp), %esp #	de new a esp
-	movl %ebp, %esp
+	#movl %ebp, %esp
 	popl %ebp
 	ret
 
@@ -27,7 +27,9 @@ ENTRY(task_switch)
 	popl %esi
 	movl %ebp, %esp
 	popl %ebp
+	ret
 
 ENTRY(init_idle_switch)
 	pushl cpu_idle
 	pushl $0
+	ret
