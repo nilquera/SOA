@@ -7,4 +7,5 @@ system
 bootsect
 zeos.bin
 user
-user.out 
+user.out
+build 
