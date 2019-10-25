@@ -4,14 +4,39 @@
 
 #include <asm.h>
 
+ENTRY(fork)
+	push %ebp
+	mov %esp, %ebp
+	mov $0x2, %eax
+	push %edx
+	push %ecx
+	push $next_fork
+	push %ebp
+	movl %esp, %ebp
+	sysenter
+next_fork:
+	popl %ebp
+	subl $4, %esp
+	popl %ecx
+	popl %edx
+	cmpl $0, %eax
+	jge end_fork
+	neg  %eax
+    movl %eax, errno
+	movl $-1, %eax
+end_fork:
+	movl %ebp, %esp
+	popl %ebp
+	ret
+
 ENTRY(getpid)
 	push %ebp
 	mov %esp, %ebp
 	mov $0x14, %eax
-	pushl %edx
-	pushl %ecx
-	pushl $next_getpid
-	pushl %ebp
+	push %edx
+	push %ecx
+	push $next_getpid
+	push %ebp
 	movl %esp, %ebp
 	sysenter
 next_getpid:
@@ -30,13 +55,13 @@ end_getpid:
 	ret
 
 ENTRY(gettime)
-	pushl %ebp
+	push %ebp
 	movl %esp, %ebp
 	movl $0xa, %eax
-	pushl %edx
-	pushl %ecx
-	pushl $next_gettime
-	pushl %ebp
+	push %edx
+	push %ecx
+	push $next_gettime
+	push %ebp
 	movl %esp, %ebp
 	sysenter
 next_gettime:
@@ -55,16 +80,16 @@ end_gettime:
 	ret
 
 ENTRY(write)
-	pushl %ebp
+	push %ebp
 	movl %esp, %ebp
 	movl 8(%ebp), %ebx
 	movl 12(%ebp), %ecx
 	movl 16(%ebp), %edx
 	movl $0x4, %eax
-	pushl %edx //no caldria
-	pushl %ecx
-	pushl $next_write
-	pushl %ebp
+	push %edx //no caldria
+	push %ecx
+	push $next_write
+	push %ebp
 	movl %esp, %ebp
 	sysenter
 next_write:

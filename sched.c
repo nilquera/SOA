@@ -140,6 +140,7 @@ void init_readyqueue()
 
 void init_sched()
 {
+	pid_count = 2; 
 	init_freequeue();
 	init_readyqueue();
 }
@@ -161,5 +162,11 @@ void inner_task_switch(union task_union *new){
 	writeMSR(0x175, tss.esp0);
 	set_cr3((new->task).dir_pages_baseAddr);
 	inner_task_switch_asm(new);
+}
+
+void assign_pid(struc task_struct *t){
+	t.PID = pid_count;
+	++pid_count;
+	if (pid_count == NR_TASKS) pid_count = 2;
 }
 

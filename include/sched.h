@@ -12,6 +12,8 @@
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
 
+int pid_count; // Policy: increment by 1 every new process. 
+
 struct list_head freequeue;
 struct list_head readyqueue;
 union task_union *idle_task;
@@ -66,6 +68,8 @@ void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
+
+void assign_pid(struct task_struct *t);
 
 
 #endif  /* __SCHED_H__ */
