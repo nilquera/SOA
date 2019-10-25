@@ -9,9 +9,12 @@ int __attribute__ ((__section__(".text.main")))
 {
 	/* Next line, tries to move value 0 to CR3 register. This register is a privileged one, and so it will raise an exception */
 	/* __asm__ __volatile__ ("mov %0, %%cr3"::"r" (0) ); */
-
-
-	if (write(1, "Escribe\n", 8) == -1){
+	char buffer[30] = "\nEl PID de init es: ";
+	if (write(1, buffer, strlen(buffer)) == -1){
+		perror();
+	}
+	itoa(getpid(), buffer);
+	if (write(1, buffer, strlen(buffer)) == -1){
 		perror();
 	}
 	while(1){ }

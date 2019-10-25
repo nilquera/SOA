@@ -4,6 +4,31 @@
 
 #include <asm.h>
 
+ENTRY(getpid)
+	push %ebp
+	mov %esp, %ebp
+	mov $0x14, %eax
+	pushl %edx
+	pushl %ecx
+	pushl $next_getpid
+	pushl %ebp
+	movl %esp, %ebp
+	sysenter
+next_getpid:
+	popl %ebp
+	subl $4, %esp
+	popl %ecx
+	popl %edx
+	cmpl $0, %eax
+	jge end_getpid
+	neg  %eax
+    movl %eax, errno
+	movl $-1, %eax
+end_getpid:
+	movl %ebp, %esp
+	popl %ebp
+	ret
+
 ENTRY(gettime)
 	pushl %ebp
 	movl %esp, %ebp
