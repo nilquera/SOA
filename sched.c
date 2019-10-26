@@ -164,8 +164,8 @@ void inner_task_switch(union task_union *new){
 	inner_task_switch_asm(new);
 }
 
-void assign_pid(struc task_struct *t){
-	t.PID = pid_count;
+void assign_pid(struct task_struct *t){
+	t->PID = pid_count;
 	++pid_count;
 	if (pid_count == NR_TASKS) pid_count = 2;
 }

@@ -46,7 +46,7 @@ int strlen(char *a)
 /*Printa por pantalla el error contenido en errno*/
 /*Com tinc acces a la variable errno desde qualsevol arxiu si està declarada al .c i no al .h?*/
 void perror(){ 
-  char buffer[50];
+  char *buffer;
   if (errno == EBADF) buffer = "Bad file number\n";
   else if (errno == EACCES) buffer = "Permission denied\n";
   else if (errno == ENOSYS) buffer = "Function not implemented\n";

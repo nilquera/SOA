@@ -7,6 +7,8 @@
 #include <segment.h>
 #include <hardware.h>
 #include <sched.h>
+#include <errno.h>
+#include <utils.h>
 
 Byte phys_mem[TOTAL_PAGES];
 
@@ -102,6 +104,8 @@ void set_user_pages( struct task_struct *task )
   }
 }
 
+void free_user_pages( struct task_struct *task );
+
 int fork_set_pages(struct task_struct *father_ts, struct task_struct *child_ts){
   int pag;
   int new_ph_pag;
@@ -119,14 +123,17 @@ int fork_set_pages(struct task_struct *father_ts, struct task_struct *child_ts){
   for (pag=0;pag<NUM_PAG_DATA;pag++){
     new_ph_pag=alloc_frame();
     if (new_ph_pag == -1) {
-      free_user_pages(child_PT);
+      free_user_pages(child_ts);
       return ENOMEM;
     }
     set_ss_pag(child_PT, PAG_LOG_INIT_DATA+pag, new_ph_pag);
 
     set_ss_pag(father_PT, PAG_LOG_INIT_DATA+NUM_PAG_DATA+pag, new_ph_pag);
   }
-  copy_data((void *)PAG_LOG_INIT_DATA*PAGE_SIZE, (void *)(PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE, NUM_PAG_DATA*PAGE_SIZE);
+  void *start_address = (void *) (PAG_LOG_INIT_DATA*PAGE_SIZE);
+  void *dest_address = (void *) ((PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE);
+
+  copy_data(start_address, dest_address, NUM_PAG_DATA*PAGE_SIZE);
   for (pag = 0; pag < NUM_PAG_DATA; ++pag){
     del_ss_pag(father_PT, PAG_LOG_INIT_DATA+NUM_PAG_DATA+pag);
   }

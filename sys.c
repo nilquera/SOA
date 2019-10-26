@@ -15,6 +15,8 @@
 
 #include <stats.h> //necessari per zeos_ticks variable
 
+#include <errno.h>
+
 #define LECTURA 0
 #define ESCRIPTURA 1
 
@@ -39,9 +41,7 @@ void ret_from_fork();
 
 int sys_fork()
 {
-	int PID=current()->PID;
-
-	if (is_empty(&freequeue)) return ENOMEM;
+	if (list_empty(&freequeue)) return ENOMEM;
 
 	struct list_head *first_elem = list_first(&freequeue);
 	list_del(first_elem);
@@ -75,11 +75,17 @@ int sys_fork()
 
 	*/
 	union task_union *child_tu = (union task_union *)child_ts;
-	child_tu->stack[KERNEL_STACK_SIZE-18] = &ret_from_fork;
+	child_tu->stack[KERNEL_STACK_SIZE-18] = (unsigned long) &ret_from_fork;
 	child_tu->stack[KERNEL_STACK_SIZE-19] = 0;
-	child_ts->kernel_ebp = &stack[KERNEL_STACK_SIZE-19];
+	child_ts->kernel_ebp = &(child_tu->stack[KERNEL_STACK_SIZE-19]);
 
-	return PID;
+	// al ctx hw també hem de canviar l'esp??? NO, perquè l'esp apunta a la mateixa adreça
+	// lògica tant al pare com al fill (és a quan es mapegen a física que son adreces diferents).
+
+	// Insert child process to ready queue
+	list_add_tail(&(child_ts->list), &readyqueue);
+
+	return child_ts->PID;
 }
 
 void sys_exit()
