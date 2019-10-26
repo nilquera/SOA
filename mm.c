@@ -102,6 +102,40 @@ void set_user_pages( struct task_struct *task )
   }
 }
 
+int fork_set_pages(struct task_struct *father_ts, struct task_struct *child_ts){
+  int pag;
+  int new_ph_pag;
+  page_table_entry *child_PT =  get_PT(child_ts);
+  page_table_entry *father_PT = get_PT(father_ts);
+
+  /* CODE: copy page entries from father process to child */
+  for (pag=0;pag<NUM_PAG_CODE;pag++){
+    child_PT[PAG_LOG_INIT_CODE+pag] = father_PT[PAG_LOG_INIT_CODE+pag];
+  }
+
+  /* DAT: 1) Finds a free frame, allocates it in child_PT and father_PT.
+          2) Copies frames using father_PT.
+          3) Finally deletes temporal frames in father_PT and flushes TLB. */
+  for (pag=0;pag<NUM_PAG_DATA;pag++){
+    new_ph_pag=alloc_frame();
+    if (new_ph_pag == -1) {
+      free_user_pages(child_PT);
+      return ENOMEM;
+    }
+    set_ss_pag(child_PT, PAG_LOG_INIT_DATA+pag, new_ph_pag);
+
+    set_ss_pag(father_PT, PAG_LOG_INIT_DATA+NUM_PAG_DATA+pag, new_ph_pag);
+  }
+  copy_data((void *)PAG_LOG_INIT_DATA*PAGE_SIZE, (void *)(PAG_LOG_INIT_DATA+NUM_PAG_DATA)*PAGE_SIZE, NUM_PAG_DATA*PAGE_SIZE);
+  for (pag = 0; pag < NUM_PAG_DATA; ++pag){
+    del_ss_pag(father_PT, PAG_LOG_INIT_DATA+NUM_PAG_DATA+pag);
+  }
+  set_cr3(get_DIR(father_ts)); //flushes TLB
+  return 0;
+}
+
+
+
 /* Writes on CR3 register producing a TLB flush */
 void set_cr3(page_table_entry * dir)
 {
