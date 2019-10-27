@@ -9,13 +9,11 @@
 
 #include <zeos_interrupt.h>
 #include <stats.h> //necessari per zeos_ticks variable
+#include <sched.h> //necessari per implementar scheduling desde clock ISR
 
 Gate idt[IDT_ENTRIES];
 Register    idtR;
 
-
-//temp
-#include <sched.h>
 
 char char_map[] =
 {
@@ -110,4 +108,5 @@ void keyboard_routine(){
 void clock_routine(){
   zeos_show_clock();
   zeos_ticks += 1;
+  schedule();
 }

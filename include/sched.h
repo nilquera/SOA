@@ -12,7 +12,9 @@
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
 
-int pid_count; // Policy: increment by 1 every new process. 
+int pid_count; // Policy: increment by 1 every new process.
+
+int ticks_count; // Current process number of ticks in the CPU
 
 struct list_head freequeue;
 struct list_head readyqueue;
@@ -25,6 +27,7 @@ struct task_struct {
   int PID;			/* Process ID. This MUST be the first field of the struct. */
   page_table_entry * dir_pages_baseAddr;
   struct list_head list;
+  int quantum;
 };
 
 union task_union {
@@ -68,6 +71,9 @@ void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
+int get_quantum (struct task_struct *t);
+void set_quantum (struct task_struct *t, int new_quantum);
+void schedule();
 
 void assign_pid(struct task_struct *t);
 
