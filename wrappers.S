@@ -29,6 +29,31 @@ end_fork:
 	pop %ebp
 	ret
 
+ENTRY(exit)
+	push %ebp
+	mov %esp, %ebp
+	mov $0x1, %eax
+	push %edx
+	push %ecx
+	push $next_exit
+	push %ebp
+	mov %esp, %ebp
+	sysenter
+next_exit:
+	pop %ebp
+	sub $4, %esp
+	pop %ecx
+	pop %edx
+	cmp $0, %eax
+	jge end_exit
+	neg  %eax
+    mov %eax, errno
+	mov $-1, %eax
+end_exit:
+	mov %ebp, %esp
+	pop %ebp
+	ret
+
 ENTRY(getpid)
 	push %ebp
 	mov %esp, %ebp

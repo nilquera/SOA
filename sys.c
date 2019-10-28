@@ -89,7 +89,9 @@ int sys_fork()
 }
 
 void sys_exit()
-{  
+{ 
+	// del_ss_pages
+	free_user_pages(current());
 }
 
 int sys_write(int fd,char *buffer,int size){
