@@ -56,7 +56,6 @@ struct task_struct *list_head_to_task_struct(struct list_head *l){
 void cpu_idle(void)
 {
 	__asm__ __volatile__("sti": : :"memory");
-	printk("ESTIC A IDLE!!!!");
 	while(1)
 	{
 	;

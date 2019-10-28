@@ -21,10 +21,19 @@ int __attribute__ ((__section__(".text.main")))
 	if (write(1, buffer2, strlen(buffer2)) == -1){
 		perror();
 	}
-	itoa(fork(), buffer2);
-	if (write(1, buffer2, strlen(buffer2)) == -1){
-		perror();
-	}
 
-	while(1){ }
+	int ret = fork();
+
+	char fill[40] = "\nSoc el fill\n";
+	char pare[40] = "\nSoc el pare\n";
+	if (ret == 0){
+		if (write(1, fill, strlen(fill)) == -1){
+			perror();
+		}
+	} else if (ret != 0){
+		if (write(1, pare, strlen(pare)) == -1){
+			perror();
+		}
+	}
+	while(1){  }
 }
