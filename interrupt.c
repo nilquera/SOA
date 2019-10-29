@@ -97,7 +97,7 @@ void setIdt()
 }
 
 void keyboard_routine(){
-  task_switch(list_head_to_task_struct(list_first(&readyqueue)));
+  task_switch((union task_union *)list_head_to_task_struct(list_first(&readyqueue)));
 	unsigned char port = inb(0x60);
 	if (port/128 == 0){
 		char ch = char_map[port&127];

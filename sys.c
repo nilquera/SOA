@@ -90,8 +90,15 @@ int sys_fork()
 
 void sys_exit()
 { 
-	// del_ss_pages
+	printk("\nKilling process");
+	// Mark frames as free AND reset the page table (erases content)
 	free_user_pages(current());
+
+ 	// PCB: put it on the freequeue. No need to erase task_union content (sys_fork will do that).
+	list_add_tail(&(current()->list), &readyqueue);
+
+	//TMP
+	task_switch(idle_task);
 }
 
 int sys_write(int fd,char *buffer,int size){

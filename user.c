@@ -17,20 +17,17 @@ int __attribute__ ((__section__(".text.main")))
 	if (write(1, buffer, strlen(buffer)) == -1){
 		perror();
 	}
-	char buffer2[40] = "\nLa llamada a fork devuelve: ";
-	if (write(1, buffer2, strlen(buffer2)) == -1){
-		perror();
-	}
 
 	int ret = fork();
 
 	char fill[40] = "\nSoc el fill\n";
-	char pare[40] = "\nSoc el pare\n";
+	char pare[40] = "Soc el pare\n";
 	if (ret == 0){
 		if (write(1, fill, strlen(fill)) == -1){
 			perror();
 		}
 	} else if (ret != 0){
+		exit();
 		if (write(1, pare, strlen(pare)) == -1){
 			perror();
 		}
