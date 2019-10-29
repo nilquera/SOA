@@ -11,6 +11,7 @@
 #include <stats.h> //necessari per zeos_ticks variable
 #include <sched.h> //necessari per implementar scheduling desde clock ISR
 
+
 Gate idt[IDT_ENTRIES];
 Register    idtR;
 
@@ -96,11 +97,12 @@ void setIdt()
   set_idt_reg(&idtR);
 }
 
+
 void keyboard_routine(){
-  task_switch((union task_union *)list_head_to_task_struct(list_first(&readyqueue)));
 	unsigned char port = inb(0x60);
 	if (port/128 == 0){
 		char ch = char_map[port&127];
+    if (ch == 'c') sys_exit();
     if (ch == '\0') ch = 'C';
 		printc_xy(0, 0, ch);
 	}

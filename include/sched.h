@@ -11,6 +11,7 @@
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
+#define _QUANTUM	100
 
 int pid_count; // Policy: increment by 1 every new process.
 

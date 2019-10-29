@@ -58,7 +58,7 @@ void cpu_idle(void)
 	__asm__ __volatile__("sti": : :"memory");
 	while(1)
 	{
-	;
+		printk("Idle\n");
 	}
 }
 
@@ -69,7 +69,7 @@ void init_idle (void)
 
 	struct task_struct *free_ts = list_head_to_task_struct(first_elem);
 	free_ts->PID = 0;
-	set_quantum(free_ts, 1000);
+	set_quantum(free_ts, _QUANTUM);
 
 	// Allocate an empty DIR for the free_ts
 	// page_table_entry *pte = allocate_DIR(free_ts);
@@ -109,7 +109,7 @@ void init_task1(void)
 
 	struct task_struct *free_ts = list_head_to_task_struct(first_elem);
 	free_ts->PID = 1;
-	set_quantum(free_ts, 1000);
+	set_quantum(free_ts, _QUANTUM);
 
 	free_ts->dir_pages_baseAddr = allocate_DIR(free_ts);
 	set_user_pages(free_ts);
@@ -142,7 +142,7 @@ void init_readyqueue()
 void init_sched()
 {
 	pid_count = 2; 
-	ticks_count = 0;
+	ticks_count = _QUANTUM;
 	init_freequeue();
 	init_readyqueue();
 }
@@ -172,35 +172,6 @@ void assign_pid(struct task_struct *t){
 	if (pid_count == NR_TASKS) pid_count = 2;
 }
 
-/* sched_next_rr - selects next process to execute and invokes context switch. */
-void sched_next_rr(){
-	struct list_head *first_elem = list_first(&readyqueue);
-	list_del(first_elem);
-	struct task_struct *ready_ts = list_head_to_task_struct(first_elem);
-	task_switch(ready_ts);
-}
-
-/* update_process_state_rr - update current state of process to new state */
-void update_process_state_rr(struct task_struct *t, struct list_head *dest){
-	list_del(&(t->list));
-	if (dest != NULL){
-		list_add_tail(&(t->list), dest);
-	}
-}
-
-/* needs_sched_rr - decides if it is necessary to change current process */
-int needs_sched_rr(){
-	if (ticks_count >= get_quantum(current())
-		&& !list_empty(&readyqueue)){
-		return 1;
-	} else return 0;
-}
-
-/* update_sched_data_rr - updates relevant info to take scheduling decisions */
-void update_sched_data_rr(){
-	++ticks_count;
-}
-
 /**/
 int get_quantum (struct task_struct *t){
 	return t->quantum;
@@ -210,7 +181,43 @@ void set_quantum (struct task_struct *t, int new_quantum){
 	t->quantum = new_quantum;
 }
 
+/* sched_next_rr - selects next process to execute and invokes context switch. */
+void sched_next_rr(){
+	struct list_head *first_elem = list_first(&readyqueue);
+	list_del(first_elem);
+	struct task_struct *ready_ts = list_head_to_task_struct(first_elem);
+	ticks_count = ready_ts->quantum;
+	task_switch((union task_union*)ready_ts);
+}
+
+/* update_process_state_rr - update current state of process to new state */
+void update_process_state_rr(struct task_struct *t, struct list_head *dest){
+	if (current() != t) list_del(&(t->list));
+	if (dest != NULL){
+		list_add_tail(&(t->list), dest);
+	}
+}
+
+/* needs_sched_rr - decides if it is necessary to change current process */
+int needs_sched_rr(){
+	if (ticks_count <= 0) return 1;
+	else return 0;
+}
+
+/* update_sched_data_rr - updates relevant info to take scheduling decisions */
+void update_sched_data_rr(){
+	--ticks_count;
+}
+
+
 void schedule(){
 	update_sched_data_rr();
-
+	if (needs_sched_rr()){
+		if (list_empty(&readyqueue)) {
+			ticks_count = current()->quantum;
+		} else {
+			if (current()->PID != 0) update_process_state_rr(current(), &readyqueue);
+			sched_next_rr();
+		}	
+	}
 }

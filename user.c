@@ -19,7 +19,7 @@ int __attribute__ ((__section__(".text.main")))
 	}
 
 	int ret = fork();
-
+/*
 	char fill[40] = "\nSoc el fill\n";
 	char pare[40] = "Soc el pare\n";
 	if (ret == 0){
@@ -32,5 +32,11 @@ int __attribute__ ((__section__(".text.main")))
 			perror();
 		}
 	}
-	while(1){  }
+*/
+	while(1){ 
+		itoa(getpid(), buffer);
+		if (write(1, buffer, strlen(buffer)) == -1){
+			perror();
+		}
+	}
 }

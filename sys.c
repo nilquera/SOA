@@ -95,10 +95,15 @@ void sys_exit()
 	free_user_pages(current());
 
  	// PCB: put it on the freequeue. No need to erase task_union content (sys_fork will do that).
-	list_add_tail(&(current()->list), &readyqueue);
+	list_add_tail(&(current()->list), &freequeue);
 
 	//TMP
-	task_switch(idle_task);
+	if (list_empty(&readyqueue)){
+		task_switch((union task_union *)idle_task);
+	} else {
+		sched_next_rr();
+	}
+
 }
 
 int sys_write(int fd,char *buffer,int size){
