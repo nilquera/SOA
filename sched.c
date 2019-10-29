@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <mm.h>
 #include <io.h>
+#include <stats.h>
 
 void inner_task_switch_asm(union task_union *new);
 void writeMSR(int msr_name, long unsigned int address);
@@ -44,7 +45,15 @@ page_table_entry * allocate_DIR(struct task_struct *t)
 	return (page_table_entry*) &dir_pages[pos];
 }
 
-
+void init_stats(struct task_struct *t){
+	(t->task_stats).user_ticks = 0;
+	(t->task_stats).system_ticks = 0;
+	(t->task_stats).blocked_ticks = 0;
+	(t->task_stats).ready_ticks = 0;
+	(t->task_stats).elapsed_total_ticks = 0;
+	(t->task_stats).total_trans = 0;
+	(t->task_stats).remaining_ticks = _QUANTUM;
+}
 
 
 
@@ -123,6 +132,8 @@ void init_task1(void)
 	tss.esp0 = (unsigned long)free_ts->kernel_ebp;
 	writeMSR(0x175, tss.esp0);
 	set_cr3(free_ts->dir_pages_baseAddr);
+
+	init_stats(free_ts);
 }
 
 void init_freequeue()
@@ -187,6 +198,7 @@ void sched_next_rr(){
 	list_del(first_elem);
 	struct task_struct *ready_ts = list_head_to_task_struct(first_elem);
 	ticks_count = ready_ts->quantum;
+	(ready_ts->task_stats).total_trans++;
 	task_switch((union task_union*)ready_ts);
 }
 
@@ -196,17 +208,28 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dest){
 	if (dest != NULL){
 		list_add_tail(&(t->list), dest);
 	}
+	(t->task_stats).elapsed_total_ticks = zeos_ticks;
 }
 
 /* needs_sched_rr - decides if it is necessary to change current process */
 int needs_sched_rr(){
 	if (ticks_count <= 0) return 1;
 	else return 0;
+
 }
 
 /* update_sched_data_rr - updates relevant info to take scheduling decisions */
 void update_sched_data_rr(){
 	--ticks_count;
+	(current()->task_stats).remaining_ticks = ticks_count;
+}
+
+void update_ready_ticks(int Q) {
+	struct list_head *pos;
+	list_for_each(pos, &readyqueue){
+		struct task_struct * ts = list_head_to_task_struct(pos);
+		(ts->task_stats).ready_ticks += Q;
+	}
 }
 
 
@@ -216,8 +239,10 @@ void schedule(){
 		if (list_empty(&readyqueue)) {
 			ticks_count = current()->quantum;
 		} else {
+			update_ready_ticks(current()->quantum);
 			if (current()->PID != 0) update_process_state_rr(current(), &readyqueue);
 			sched_next_rr();
+
 		}	
 	}
 }

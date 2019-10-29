@@ -65,7 +65,7 @@ int sys_fork()
 		
 		|    0   |
 		|--------|
-		|ret_fork| <-- [KERNEL_STACK_SIZE - 18]
+		|ret_fork| <-- [KERNEL_STACK_SIZE - 19]
 		|--------|
 		|@handler|
 		|--------| 
@@ -101,6 +101,7 @@ void sys_exit()
 	if (list_empty(&readyqueue)){
 		task_switch((union task_union *)idle_task);
 	} else {
+		update_ready_ticks(current()->quantum - current()->task_stats.remaining_ticks);
 		sched_next_rr();
 	}
 
@@ -116,4 +117,23 @@ int sys_write(int fd,char *buffer,int size){
 int sys_gettime(){
 	if (zeos_ticks < 0) return -4; /*EINTR*/
 	else return zeos_ticks;
+}
+
+void sys_get_stats(int pid,struct stats *st){
+	if (current()->PID == pid) {
+		struct stats ret_st = current()->task_stats;
+		copy_to_user(&ret_st, st, sizeof(struct stats));
+	}
+	else {
+		if (list_empty(&readyqueue)) return -1;
+		struct list_head *pos;
+		list_for_each(pos, &readyqueue){
+			struct task_struct * ts = list_head_to_task_struct(pos);
+			if (ts->PID == pid) {
+				copy_to_user(&(ts->task_stats), st, sizeof(struct stats));
+				return 0;
+			}
+		}
+		return -1;
+	}
 }

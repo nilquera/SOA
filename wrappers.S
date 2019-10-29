@@ -131,3 +131,30 @@ end_write:
 	mov %ebp, %esp
 	pop %ebp
 	ret
+
+ENTRY(get_stats)
+	push %ebp
+	mov %esp, %ebp
+	mov 8(%ebp), %ebx
+	mov 12(%ebp), %ecx
+	mov $0x23, %eax
+	push %edx
+	push %ecx
+	push $next_get_stats
+	push %ebp
+	mov %esp, %ebp
+	sysenter
+next_get_stats:
+	pop %ebp
+	sub $4, %esp
+	pop %ecx
+	pop %edx
+	cmp $0, %eax
+	jge end_get_stats
+	neg  %eax
+    mov %eax, errno
+	mov $-1, %eax
+end_get_stats:
+	mov %ebp, %esp
+	pop %ebp
+	ret

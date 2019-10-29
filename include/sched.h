@@ -8,6 +8,7 @@
 #include <list.h>
 #include <types.h>
 #include <mm_address.h>
+#include <stats.h>
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
@@ -29,6 +30,7 @@ struct task_struct {
   page_table_entry * dir_pages_baseAddr;
   struct list_head list;
   int quantum;
+  struct stats task_stats;
 };
 
 union task_union {
@@ -77,6 +79,10 @@ void set_quantum (struct task_struct *t, int new_quantum);
 void schedule();
 
 void assign_pid(struct task_struct *t);
+
+void init_stats(struct task_struct *t);
+
+void update_ready_ticks(int Q);
 
 
 #endif  /* __SCHED_H__ */
