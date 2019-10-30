@@ -52,6 +52,8 @@ void perror(){
   else if (errno == ENOSYS) buffer = "Function not implemented\n";
   else if (errno == EINTR) buffer = "Interrupted system call\n";
   else if (errno == ENOMEM) buffer = "Not enough core\n";
+  else if (errno == ENULLPTR) buffer = "Null pointer detected\n";
+  else if (errno == ESRCH) buffer = "No such process\n";
   else buffer = "Undefined error\n"; 
   write(1, buffer, strlen(buffer));
 }

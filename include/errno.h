@@ -147,5 +147,6 @@
 #define EOVERFLOW 139	/* Value too large for defined data type */
 #define EWOULDBLOCK EAGAIN	/* Operation would block */
 #define __ELASTERROR 2000	/* Users can add values starting here */
+#define ENULLPTR 2001 /* Null pointer detected */
 
 #endif

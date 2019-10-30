@@ -110,30 +110,28 @@ void sys_exit()
 int sys_write(int fd,char *buffer,int size){
 	int check = check_fd(fd, ESCRIPTURA);
 	if (check < 0) return check;
-	else if (*buffer == NULL || size <= 0) return -4; /*EINTR*/
+	else if (*buffer == NULL || size <= 0) return EINTR;
 	else return sys_write_console(buffer, size);
 }
 
 int sys_gettime(){
-	if (zeos_ticks < 0) return -4; /*EINTR*/
+	if (zeos_ticks < 0) return EINTR;
 	else return zeos_ticks;
 }
 
 void sys_get_stats(int pid,struct stats *st){
+	if (st == NULL) return ENULLPTR;
 	if (current()->PID == pid) {
-		struct stats ret_st = current()->task_stats;
-		copy_to_user(&ret_st, st, sizeof(struct stats));
-	}
-	else {
-		if (list_empty(&readyqueue)) return -1;
+		return copy_to_user(&current()->task_stats, st, sizeof(struct stats));
+	} else {
+		if (list_empty(&readyqueue)) return ESRCH;
 		struct list_head *pos;
 		list_for_each(pos, &readyqueue){
-			struct task_struct * ts = list_head_to_task_struct(pos);
+			struct task_struct *ts = list_head_to_task_struct(pos);
 			if (ts->PID == pid) {
-				copy_to_user(&(ts->task_stats), st, sizeof(struct stats));
-				return 0;
+				return copy_to_user(&(ts->task_stats), st, sizeof(struct stats));
 			}
 		}
-		return -1;
+		return ESRCH;
 	}
 }
