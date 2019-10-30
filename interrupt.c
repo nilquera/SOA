@@ -102,7 +102,6 @@ void keyboard_routine(){
 	unsigned char port = inb(0x60);
 	if (port/128 == 0){
 		char ch = char_map[port&127];
-    if (ch == 'c') sys_exit();
     if (ch == '\0') ch = 'C';
 		printc_xy(0, 0, ch);
 	}

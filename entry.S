@@ -87,6 +87,7 @@ ENTRY(clock_handler)
 ENOSYS = 78
 
 ENTRY(syscall_handler_sysenter)
+	call update_stats_enter
 	push $__USER_DS
 	push %ebp
 	pushfl
@@ -107,4 +108,5 @@ sysenter_fin:
 	movl (%esp), %edx
 	movl 12(%esp), %ecx
 	sti
+	call update_stats_exit
 	sysexit

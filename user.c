@@ -1,10 +1,8 @@
 #include <libc.h>
 #include <stats.h>
 
-char buff[24];
-
 int pid;
-char str[40];
+char buff[40];
 
 
 int __attribute__ ((__section__(".text.main")))
@@ -21,25 +19,8 @@ int __attribute__ ((__section__(".text.main")))
 		perror();
 	}
 
+	int ret = fork();
 	
-/*
-	char fill[40] = "\nSoc el fill\n";
-	char pare[40] = "Soc el pare\n";
-	if (ret == 0){
-		if (write(1, fill, strlen(fill)) == -1){
-			perror();
-		}
-	} else if (ret != 0){
-		exit();
-		if (write(1, pare, strlen(pare)) == -1){
-			perror();
-		}
-	}
-*/
-
-
-	
-
 /*
 		struct stats st;
 		char string[40] = "\n Hola";
@@ -54,16 +35,6 @@ int __attribute__ ((__section__(".text.main")))
 		}
 		*/
 
-
-
 	while(1){
-		struct stats st;
-	get_stats(1, &st);
-
-
-	itoa(st.total_trans, str);
-	if (write(1, str, strlen(str)) == -1){
-		perror();
-	}
 	}
 }

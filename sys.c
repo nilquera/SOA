@@ -101,7 +101,6 @@ void sys_exit()
 	if (list_empty(&readyqueue)){
 		task_switch((union task_union *)idle_task);
 	} else {
-		update_ready_ticks(current()->quantum - current()->task_stats.remaining_ticks);
 		sched_next_rr();
 	}
 
@@ -119,7 +118,7 @@ int sys_gettime(){
 	else return zeos_ticks;
 }
 
-void sys_get_stats(int pid,struct stats *st){
+int sys_get_stats(int pid,struct stats *st){
 	if (st == NULL) return ENULLPTR;
 	if (current()->PID == pid) {
 		return copy_to_user(&current()->task_stats, st, sizeof(struct stats));

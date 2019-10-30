@@ -6,6 +6,7 @@
 #include <mm.h>
 #include <io.h>
 #include <stats.h>
+#include <utils.h>
 
 void inner_task_switch_asm(union task_union *new);
 void writeMSR(int msr_name, long unsigned int address);
@@ -55,12 +56,9 @@ void init_stats(struct task_struct *t){
 	(t->task_stats).remaining_ticks = _QUANTUM;
 }
 
-
-
 struct task_struct *list_head_to_task_struct(struct list_head *l){
 	return (struct task_struct*) ((int)l & 0xfffff000);
 }
-
 
 void cpu_idle(void)
 {
@@ -198,7 +196,9 @@ void sched_next_rr(){
 	list_del(first_elem);
 	struct task_struct *ready_ts = list_head_to_task_struct(first_elem);
 	ticks_count = ready_ts->quantum;
-	(ready_ts->task_stats).total_trans++;
+	ready_ts->task_stats.total_trans++;
+	ready_ts->task_stats.ready_ticks += get_ticks() - ready_ts->task_stats.elapsed_total_ticks;
+	ready_ts->task_stats.elapsed_total_ticks = get_ticks();
 	task_switch((union task_union*)ready_ts);
 }
 
@@ -208,7 +208,9 @@ void update_process_state_rr(struct task_struct *t, struct list_head *dest){
 	if (dest != NULL){
 		list_add_tail(&(t->list), dest);
 	}
-	(t->task_stats).elapsed_total_ticks = zeos_ticks;
+
+	current()->task_stats.system_ticks += get_ticks() - current()->task_stats.elapsed_total_ticks;
+	t->task_stats.elapsed_total_ticks = get_ticks();
 }
 
 /* needs_sched_rr - decides if it is necessary to change current process */
@@ -224,14 +226,13 @@ void update_sched_data_rr(){
 	(current()->task_stats).remaining_ticks = ticks_count;
 }
 
-void update_ready_ticks(int Q) {
+/*void update_ready_ticks(int Q) {
 	struct list_head *pos;
 	list_for_each(pos, &readyqueue){
 		struct task_struct * ts = list_head_to_task_struct(pos);
 		(ts->task_stats).ready_ticks += Q;
 	}
-}
-
+}*/
 
 void schedule(){
 	update_sched_data_rr();
@@ -239,10 +240,23 @@ void schedule(){
 		if (list_empty(&readyqueue)) {
 			ticks_count = current()->quantum;
 		} else {
-			update_ready_ticks(current()->quantum);
+			//update_ready_ticks(current()->quantum); // FIG. 26
 			if (current()->PID != 0) update_process_state_rr(current(), &readyqueue);
 			sched_next_rr();
-
 		}	
 	}
+}
+
+void update_stats_enter(){
+  unsigned long current_ticks = get_ticks();
+  current()->task_stats.user_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
+  current()->task_stats.elapsed_total_ticks = current_ticks;
+  return;
+}
+
+void update_stats_exit(){
+  unsigned long current_ticks = get_ticks();
+  current()->task_stats.system_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
+  current()->task_stats.elapsed_total_ticks = current_ticks;
+  return;
 }

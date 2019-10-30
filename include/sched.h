@@ -84,5 +84,7 @@ void init_stats(struct task_struct *t);
 
 void update_ready_ticks(int Q);
 
+void update_stats_enter();
+void update_stats_exit();
 
 #endif  /* __SCHED_H__ */
