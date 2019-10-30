@@ -121,7 +121,8 @@ int sys_gettime(){
 int sys_get_stats(int pid,struct stats *st){
 	if (st == NULL) return ENULLPTR;
 	if (current()->PID == pid) {
-		return copy_to_user(&current()->task_stats, st, sizeof(struct stats));
+		copy_to_user(&(current()->task_stats), st, sizeof(struct stats));
+		return 0;
 	} else {
 		if (list_empty(&readyqueue)) return ESRCH;
 		struct list_head *pos;
