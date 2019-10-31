@@ -95,18 +95,6 @@ void init_idle (void)
 
 	// Initialize idle_task
 	idle_task = free_tu;
-
-	/*
-		free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]);
-		//free_ts->kernel_ebp=(unsigned long *) ((unsigned long)free_ts|(unsigned long)4095);
-
-		*(free_ts->kernel_ebp)=(unsigned long) &cpu_idle;
-
-		free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-2]);
-		//free_ts->kernel_ebp-=4;
-
-		*(free_ts->kernel_ebp)=0;
-	*/
 }
 
 void init_task1(void)
@@ -122,7 +110,7 @@ void init_task1(void)
 	set_user_pages(free_ts);
 
 	//no diu a la guia que s'hagi de fer això
-	//suposo que quan es fanci un switch de init a un altre process
+	//suposo que quan es faci un switch de init a un altre process
 	//... el kernel_ebp es modifica al final, per tant és igual el que valgui al principi 
 	//... El kernel_ebp serveix per ENTRAR a la CPU, però init la primera vegada no entra amb task_switch
 	free_ts->kernel_ebp=&(((union task_union *)free_ts)->stack[KERNEL_STACK_SIZE-1]); //apunta abaix
@@ -226,21 +214,12 @@ void update_sched_data_rr(){
 	(current()->task_stats).remaining_ticks = ticks_count;
 }
 
-/*void update_ready_ticks(int Q) {
-	struct list_head *pos;
-	list_for_each(pos, &readyqueue){
-		struct task_struct * ts = list_head_to_task_struct(pos);
-		(ts->task_stats).ready_ticks += Q;
-	}
-}*/
-
 void schedule(){
 	update_sched_data_rr();
 	if (needs_sched_rr()){
 		if (list_empty(&readyqueue)) {
 			ticks_count = current()->quantum;
 		} else {
-			//update_ready_ticks(current()->quantum); // FIG. 26
 			if (current()->PID != 0) update_process_state_rr(current(), &readyqueue);
 			sched_next_rr();
 		}	

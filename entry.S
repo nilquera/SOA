@@ -63,7 +63,25 @@
 	popl %es; \
 	popl %fs; \
 	popl %gs;
-	
+
+#define SAVE_UPDATE \
+	pushl %eax; \
+	pushl %ebp; \
+	pushl %edi; \
+	pushl %esi; \
+	pushl %edx; \
+	pushl %ecx; \
+	pushl %ebx;
+
+#define RESTORE_UPDATE \
+	popl %ebx; \
+	popl %ecx; \
+	popl %edx; \
+	popl %esi; \
+	popl %edi; \
+	popl %ebp; \
+	popl %eax;
+
 #define EOI \
 	movb $0x20, %al; \
 	outb %al, $0x20 ;
@@ -81,7 +99,7 @@ ENTRY(clock_handler)
 	call clock_routine
 	RESTORE_ALL
 	iret
-
+	
 // definim temporalment ENOSYS, que posteriorment estará a errno.h
 .globl ENOSYS
 ENOSYS = 78
@@ -97,6 +115,9 @@ ENTRY(syscall_handler_sysenter)
 	jl sysenter_err
 	cmpl $MAX_SYSCALL, %eax
 	jg sysenter_err
+	SAVE_UPDATE
+	call update_stats_enter
+	RESTORE_UPDATE
 	call *sys_call_table(, %eax, 0x04)
 	jmp sysenter_fin
 sysenter_err:
@@ -106,5 +127,8 @@ sysenter_fin:
 	RESTORE_ALL
 	movl (%esp), %edx
 	movl 12(%esp), %ecx
+	SAVE_UPDATE
+	call update_stats_exit
+	RESTORE_UPDATE
 	sti
 	sysexit
