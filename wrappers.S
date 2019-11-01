@@ -111,7 +111,7 @@ ENTRY(write)
 	mov 12(%ebp), %ecx
 	mov 16(%ebp), %edx
 	mov $0x4, %eax
-	push %edx //no caldria
+	push %edx
 	push %ecx
 	push $next_write
 	push %ebp

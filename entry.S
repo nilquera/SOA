@@ -88,15 +88,27 @@
 
 ENTRY(keyboard_handler)
 	SAVE_ALL
+	SAVE_UPDATE
+	call update_stats_enter
+	RESTORE_UPDATE
 	EOI
 	call keyboard_routine
+	SAVE_UPDATE
+	call update_stats_exit
+	RESTORE_UPDATE
 	RESTORE_ALL
 	iret
 
 ENTRY(clock_handler)
 	SAVE_ALL
+	SAVE_UPDATE
+	call update_stats_enter
+	RESTORE_UPDATE
 	EOI
 	call clock_routine
+	SAVE_UPDATE
+	call update_stats_exit
+	RESTORE_UPDATE
 	RESTORE_ALL
 	iret
 	
