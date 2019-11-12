@@ -10,7 +10,7 @@
 #include <zeos_interrupt.h>
 #include <stats.h> //necessari per zeos_ticks variable
 #include <sched.h> //necessari per implementar scheduling desde clock ISR
-
+#include <schedperf.h>
 
 Gate idt[IDT_ENTRIES];
 Register    idtR;
@@ -92,7 +92,7 @@ void setIdt()
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33, keyboard_handler, 0);
   setInterruptHandler(32, clock_handler, 0);
-  //setTrapHandler(0x80, system_call_handler, 3);
+  setTrapHandler(0x80, system_call_handler, 3);
   
   set_idt_reg(&idtR);
 }
@@ -108,6 +108,7 @@ void keyboard_routine(){
 }
 
 void clock_routine(){
+  zeos_update_read_console_emul();
   zeos_show_clock();
   zeos_ticks += 1;
   schedule();

@@ -7,6 +7,7 @@
 #include <io.h>
 #include <stats.h>
 #include <utils.h>
+#include <schedperf.h>
 
 void inner_task_switch_asm(union task_union *new);
 void writeMSR(int msr_name, long unsigned int address);
@@ -142,6 +143,7 @@ void init_sched()
 	ticks_count = _QUANTUM;
 	init_freequeue();
 	init_readyqueue();
+	init_sched_policy();
 }
 
 struct task_struct* current()
@@ -215,13 +217,13 @@ void update_sched_data_rr(){
 }
 
 void schedule(){
-	update_sched_data_rr();
-	if (needs_sched_rr()){
+	update_sched_data();
+	if (needs_sched()){
 		if (list_empty(&readyqueue)) {
 			ticks_count = current()->quantum;
 		} else {
-			if (current()->PID != 0) update_process_state_rr(current(), &readyqueue);
-			sched_next_rr();
+			if (current()->PID != 0) update_process_state(current(), &readyqueue);
+			sched_next();
 		}	
 	}
 }
@@ -238,4 +240,35 @@ void update_stats_exit(){
   current()->task_stats.system_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
   current()->task_stats.elapsed_total_ticks = current_ticks;
   return;
+}
+
+struct stats *get_task_stats(struct task_struct *t){
+	return &(t->task_stats);
+}
+
+struct list_head *get_task_list (struct task_struct *t){
+	return &(t->list);
+}
+
+void block_process(struct list_head *block_queue){
+	struct task_struct *t = current();
+	struct stats *st = get_task_stats(t);
+
+	st->system_ticks = get_ticks()-st->elapsed_total_ticks;
+	st->elapsed_total_ticks= get_ticks();
+	update_process_state(t, block_queue);
+	sched_next();
+}
+
+void unblock_process(struct task_struct *blocked){
+	struct stats *st=get_task_stats(blocked);
+	struct list_head *l = get_task_list(blocked);
+
+	st->blocked_ticks += get_ticks()-st->elapsed_total_ticks;
+	st->elapsed_total_ticks = get_ticks();
+	update_process_state(blocked, &readyqueue);
+	if (needs_sched()) {
+		update_process_state(current(), &readyqueue);
+		sched_next();
+	}
 }

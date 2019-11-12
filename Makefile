@@ -37,6 +37,7 @@ SYSOBJ = \
 	list.o \
 	msr.o \
 	fork.o \
+	libschedperf.a \
 
 LIBZEOS = -L . -l zeos
 
@@ -44,6 +45,7 @@ LIBZEOS = -L . -l zeos
 USROBJ = \
 	libc.o \
 	wrappers.o \
+	libuser.a \
 	# libjp.a \
 
 all:zeos.bin

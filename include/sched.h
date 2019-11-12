@@ -70,10 +70,13 @@ page_table_entry * get_PT (struct task_struct *t) ;
 page_table_entry * get_DIR (struct task_struct *t) ;
 
 /* Headers for the scheduling policy */
+/*
 void sched_next_rr();
 void update_process_state_rr(struct task_struct *t, struct list_head *dest);
 int needs_sched_rr();
 void update_sched_data_rr();
+*/
+
 int get_quantum (struct task_struct *t);
 void set_quantum (struct task_struct *t, int new_quantum);
 void schedule();
@@ -86,5 +89,8 @@ void update_ready_ticks(int Q);
 
 void update_stats_enter();
 void update_stats_exit();
+
+struct stats *get_task_stats(struct task_struct *t);
+struct list_head *get_task_list (struct task_struct *t);
 
 #endif  /* __SCHED_H__ */

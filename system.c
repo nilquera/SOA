@@ -13,6 +13,7 @@
 #include <utils.h>
 #include <zeos_mm.h> /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
 #include <stats.h> //necessari per zeos_ticks variable
+#include <schedperf.h>
 
 
 int (*usr_main)(void) = (void *) PH_USER_START;
@@ -102,6 +103,10 @@ int __attribute__((__section__(".text.main")))
 
   /* Initialize task 1 data */
   init_task1();
+
+  /* Init console */
+  zeos_console_init();
+
 
   /* Move user code/data now (after the page table initialization) */
   copy_data((void *) KERNEL_START + *p_sys_size, usr_main, *p_usr_size);
