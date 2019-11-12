@@ -56,8 +56,11 @@ int __attribute__ ((__section__(".text.main")))
   main(void)
 {
 	int f = fork();
-	fib(32);
-	print_stats(getpid());
-	
-	while(1){}
+	while(1){
+		if (f != 0) {
+			write(1, "padre\n", strlen("padre\n"));
+		} else {
+			write(1, "hijo\n", strlen("hijo\n"));
+		}
+	}
 }
