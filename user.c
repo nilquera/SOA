@@ -4,14 +4,6 @@
 int set_sched_policy(int policy);
 int read (int fd, char *buf, int nbytes);
 
-int pid;
-char buff[40];
-
-int fib(int f){
-	if (f <= 1) return 1;
-	else return fib(f-1)+fib(f-2);
-}
-
 void print_stats(int pid){
 	char buff2[40];
 	struct stats st;
@@ -55,23 +47,124 @@ void print_stats(int pid){
 	write(1, buff2, strlen(buff2));
 }
 
+int pid;
+char buff[40];
+
+int fib(int f){
+	if (f <= 1) return 1;
+	else return fib(f-1)+fib(f-2);
+}
+
+void workload_1(){
+	int ret1, ret2, ret3; //fill 1, fill 2, fill 3 (3, 4, 5)
+
+	ret1 = fork();
+	if (ret1 != 0) {
+		ret2 = fork();
+		if (ret2 != 0) ret3 = fork();
+	}
+
+	fib(30);
+
+	if (ret1 != 0 && ret2 != 0 && ret3 != 0){
+
+		print_stats(ret1);
+		print_stats(ret2);
+		print_stats(ret3);
+		print_stats(0);
+	}
+}
+
+void workload_2(){
+
+}
+
+void workload_3(){
+
+}
+
+
 int __attribute__ ((__section__(".text.main")))
   main(void)
 {
 	set_sched_policy(0);
-	read(0, buff, 1);
+	workload_1();
 
-	/*int f = fork();
-	*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	while(1){
-		/*
-		if (f != 0) {
-			write(1, "padre\n", strlen("padre\n"));
-			read(0, buff, 2);
-		} else {
-			write(1, "hijo\n", strlen("hijo\n"));
-		}
-		*/
 	}
 
 }

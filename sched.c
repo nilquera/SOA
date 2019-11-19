@@ -182,14 +182,23 @@ void set_quantum (struct task_struct *t, int new_quantum){
 
 /* sched_next_rr - selects next process to execute and invokes context switch. */
 void sched_next_rr(){
-	struct list_head *first_elem = list_first(&readyqueue);
-	list_del(first_elem);
-	struct task_struct *ready_ts = list_head_to_task_struct(first_elem);
-	ticks_count = ready_ts->quantum;
-	ready_ts->task_stats.total_trans++;
-	ready_ts->task_stats.ready_ticks += get_ticks() - ready_ts->task_stats.elapsed_total_ticks;
-	ready_ts->task_stats.elapsed_total_ticks = get_ticks();
-	task_switch((union task_union*)ready_ts);
+	struct list_head *e;
+	struct task_struct *t;
+	if (list_empty(&readyqueue)) {
+		t=idle_task;
+	} else {
+		e=list_first(&readyqueue);
+		list_del(e);
+		t=list_head_to_task_struct(e);
+	}
+
+
+	ticks_count = t->quantum;
+	t->task_stats.total_trans++;
+	t->task_stats.ready_ticks += get_ticks() - t->task_stats.elapsed_total_ticks;
+	t->task_stats.elapsed_total_ticks = get_ticks();
+
+	task_switch((union task_union*)t);
 }
 
 /* update_process_state_rr - update current state of process to new state */
@@ -218,13 +227,10 @@ void update_sched_data_rr(){
 
 void schedule(){
 	update_sched_data();
-	if (needs_sched()){
-		if (list_empty(&readyqueue)) {
-			ticks_count = current()->quantum;
-		} else {
-			if (current()->PID != 0) update_process_state(current(), &readyqueue);
-			sched_next();
-		}	
+	if (needs_sched())
+	{
+		if (current()->PID != 0) update_process_state(current(), &readyqueue);
+		sched_next();
 	}
 }
 
