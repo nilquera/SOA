@@ -1,8 +1,8 @@
 #include <libc.h>
 #include <stats.h>
-#include <schedperf.h>
 
 int set_sched_policy(int policy);
+int read (int fd, char *buf, int nbytes);
 
 int pid;
 char buff[40];
@@ -58,16 +58,20 @@ void print_stats(int pid){
 int __attribute__ ((__section__(".text.main")))
   main(void)
 {
-	set_sched_policy(1);
-	int f = fork();
+	set_sched_policy(0);
+	read(0, buff, 1);
+
+	/*int f = fork();
+	*/
 	while(1){
+		/*
 		if (f != 0) {
 			write(1, "padre\n", strlen("padre\n"));
-			read(0, buff, 100);
-			write(1, buff, sizeof(buff));
+			read(0, buff, 2);
 		} else {
 			write(1, "hijo\n", strlen("hijo\n"));
-			read(0, buff, 100);
 		}
+		*/
 	}
+
 }
