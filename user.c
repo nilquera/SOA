@@ -4,9 +4,11 @@
 int set_sched_policy(int policy);
 int read (int fd, char *buf, int nbytes);
 
+
+
 void print_stats(int pid){
-	char buff2[40];
 	struct stats st;
+	char buff2[40];
 
 	if (pid < 0) return;
 	if (get_stats(pid, &st) == -1) {
@@ -47,7 +49,6 @@ void print_stats(int pid){
 	write(1, buff2, strlen(buff2));
 }
 
-int pid;
 char buff[40];
 
 int fib(int f){
@@ -55,34 +56,69 @@ int fib(int f){
 	else return fib(f-1)+fib(f-2);
 }
 
+// CPU
 void workload_1(){
-	int ret1, ret2, ret3; //fill 1, fill 2, fill 3 (3, 4, 5)
+	int pid;
 
-	ret1 = fork();
-	if (ret1 != 0) {
-		ret2 = fork();
-		if (ret2 != 0) ret3 = fork();
+	pid = fork();
+	if (pid != 0) {
+		pid = fork();
+		if (pid != 0) pid = fork();
 	}
 
-	fib(30);
+	fib(32);
 
-	if (ret1 != 0 && ret2 != 0 && ret3 != 0){
+	if (pid > 0) print_stats(0);
 
-		print_stats(ret1);
-		print_stats(ret2);
-		print_stats(ret3);
-		print_stats(0);
+	if (pid == 0) {
+		print_stats(getpid());
+		exit();
 	}
+	return;
 }
 
+// I/O
 void workload_2(){
+	int pid;
 
+	pid = fork();
+	if (pid != 0) {
+		pid = fork();
+		if (pid != 0) pid = fork();
+	}
+
+	read(0, 0, 500);
+
+	if (pid > 0) print_stats(0);
+
+	if (pid == 0) {
+		print_stats(getpid());
+		exit();
+	}
+	return;
 }
 
+// mix I/O and CPU
 void workload_3(){
+	int pid;
 
+	pid = fork();
+	if (pid != 0) {
+		pid = fork();
+		if (pid != 0) pid = fork();
+	}
+
+	read(0, 0, 500);
+	fib(32);
+
+	if (pid > 0) print_stats(0);
+
+	if (pid == 0) {
+		print_stats(getpid());
+		exit();
+	}
+	return;
 }
-
 
 int __attribute__ ((__section__(".text.main")))
   main(void)
@@ -90,81 +126,7 @@ int __attribute__ ((__section__(".text.main")))
 	set_sched_policy(0);
 	workload_1();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	while(1){
 	}
 
-}
+}	

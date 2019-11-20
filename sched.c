@@ -66,7 +66,7 @@ void cpu_idle(void)
 	__asm__ __volatile__("sti": : :"memory");
 	while(1)
 	{
-		printk("Idle\n");
+		//printk("Idle\n");
 	}
 }
 
