@@ -118,20 +118,22 @@ int sys_gettime(){
 	else return zeos_ticks;
 }
 
-int sys_get_stats(int pid,struct stats *st){
-	if (st == NULL) return ENULLPTR;
-	if (current()->PID == pid) {
-		copy_to_user(&(current()->task_stats), st, sizeof(struct stats));
-		return 0;
-	} else {
-		if (list_empty(&readyqueue)) return ESRCH;
-		struct list_head *pos;
-		list_for_each(pos, &readyqueue){
-			struct task_struct *ts = list_head_to_task_struct(pos);
-			if (ts->PID == pid) {
-				return copy_to_user(&(ts->task_stats), st, sizeof(struct stats));
-			}
-		}
-		return ESRCH;
-	}
+
+int sys_get_stats(int pid, struct stats *st)
+{
+  int i;
+  
+  if (!access_ok(VERIFY_WRITE, st, sizeof(struct stats))) return -EFAULT; 
+  
+  if (pid<0) return -EINVAL;
+  for (i=0; i<NR_TASKS; i++)
+  {
+    if (task[i].task.PID==pid)
+    {
+      task[i].task.task_stats.remaining_ticks=ticks_count;
+      copy_to_user(&(task[i].task.task_stats), st, sizeof(struct stats));
+      return 0;
+    }
+  }
+  return -ESRCH; /*ESRCH */
 }

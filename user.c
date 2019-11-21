@@ -87,7 +87,7 @@ void workload_2(){
 		if (pid != 0) pid = fork();
 	}
 
-	read(0, 0, 500);
+	read(0, 0, 100);
 
 	if (pid > 0) print_stats(0);
 
@@ -124,9 +124,8 @@ int __attribute__ ((__section__(".text.main")))
   main(void)
 {
 	set_sched_policy(0);
-	workload_1();
+	workload_2();
 
 	while(1){
 	}
-
 }	

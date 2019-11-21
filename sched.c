@@ -94,8 +94,11 @@ void init_idle (void)
 	// Point free_ts' kernel_ebp to the position of the fake ebp.
 	free_ts->kernel_ebp = &stack[KERNEL_STACK_SIZE-2];
 
+	init_stats(free_ts);
+
 	// Initialize idle_task
 	idle_task = free_tu;
+
 }
 
 void init_task1(void)
@@ -192,8 +195,8 @@ void sched_next_rr(){
 		t=list_head_to_task_struct(e);
 	}
 
-
 	ticks_count = t->quantum;
+
 	t->task_stats.total_trans++;
 	t->task_stats.ready_ticks += get_ticks() - t->task_stats.elapsed_total_ticks;
 	t->task_stats.elapsed_total_ticks = get_ticks();
