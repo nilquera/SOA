@@ -82,12 +82,14 @@ void workload_2(){
 	int pid;
 
 	pid = fork();
+
 	if (pid != 0) {
 		pid = fork();
 		if (pid != 0) pid = fork();
 	}
 
-	read(0, 0, 100);
+
+	read(0, 0, 300);
 
 	if (pid > 0) print_stats(0);
 
@@ -103,6 +105,7 @@ void workload_3(){
 	int pid;
 
 	pid = fork();
+
 	if (pid != 0) {
 		pid = fork();
 		if (pid != 0) pid = fork();
@@ -120,12 +123,21 @@ void workload_3(){
 	return;
 }
 
+void workload_4(){
+	int pid;
+
+	read(0, 0, 500);
+
+	print_stats(0);
+
+	return;
+}
+
 int __attribute__ ((__section__(".text.main")))
   main(void)
 {
 	set_sched_policy(0);
-	workload_2();
-
+	workload_3();
 	while(1){
 	}
 }	

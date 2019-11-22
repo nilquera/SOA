@@ -1,0 +1,3 @@
+Hemos hecho tres workloads diferentes. Uno con mucha carga de CPU, que simplemente es ejecutar la función de fibonacci. El segundo con una llamada bloqueante i nula carga de CPU. Finalmente, el tercer workload hace una mezcla de los dos.
+
+Dado que los resultados obtenidos son incoherentos con lo que debería occurir, entendemos que nuestro código está mal, por lo que no podemos establecer ninguna conclusión apropiada.

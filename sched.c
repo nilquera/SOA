@@ -197,8 +197,8 @@ void sched_next_rr(){
 
 	ticks_count = t->quantum;
 
+	if (t != idle_task ) t->task_stats.ready_ticks += get_ticks() - t->task_stats.elapsed_total_ticks;
 	t->task_stats.total_trans++;
-	t->task_stats.ready_ticks += get_ticks() - t->task_stats.elapsed_total_ticks;
 	t->task_stats.elapsed_total_ticks = get_ticks();
 
 	task_switch((union task_union*)t);
@@ -232,15 +232,22 @@ void schedule(){
 	update_sched_data();
 	if (needs_sched())
 	{
-		if (current()->PID != 0) update_process_state(current(), &readyqueue);
+		if (current() != idle_task) update_process_state(current(), &readyqueue);
+		else {
+  			unsigned long current_ticks = get_ticks();
+			current()->task_stats.system_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
+		}
 		sched_next();
 	}
 }
 
 void update_stats_enter(){
   unsigned long current_ticks = get_ticks();
-  current()->task_stats.user_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
-  current()->task_stats.elapsed_total_ticks = current_ticks;
+  if (current() != idle_task) 
+  {
+  	current()->task_stats.user_ticks += current_ticks - current()->task_stats.elapsed_total_ticks;
+  	current()->task_stats.elapsed_total_ticks = current_ticks;
+  }
   return;
 }
 
