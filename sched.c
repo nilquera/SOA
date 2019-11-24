@@ -105,10 +105,12 @@ void init_task1(void)
 {
 	struct list_head *first_elem = list_first(&freequeue);
 	list_del(first_elem);
-
 	struct task_struct *free_ts = list_head_to_task_struct(first_elem);
+
 	free_ts->PID = 1;
 	set_quantum(free_ts, _QUANTUM);
+	free_ts->state = ST_RUN;
+	ticks_count = _QUANTUM;
 
 	free_ts->dir_pages_baseAddr = allocate_DIR(free_ts);
 	set_user_pages(free_ts);
@@ -139,11 +141,9 @@ void init_readyqueue()
 	INIT_LIST_HEAD(&readyqueue);
 }
 
-
 void init_sched()
 {
 	pid_count = 2; 
-	ticks_count = _QUANTUM;
 	init_freequeue();
 	init_readyqueue();
 	init_sched_policy();
@@ -183,17 +183,37 @@ void set_quantum (struct task_struct *t, int new_quantum){
 	t->quantum = new_quantum;
 }
 
+/* update_process_state_rr - update current state of process to new state */
+void update_process_state_rr(struct task_struct *t, struct list_head *dest){
+	if (t->state != ST_RUN) list_del(&(t->list));
+	if (dest != NULL){
+		list_add_tail(&(t->list), dest);
+		if (dest != &readyqueue) t->state = ST_BLOCKED;
+		else {
+			t->state = ST_READY;
+		}
+
+	}
+	else t->state = ST_RUN;
+
+	current()->task_stats.system_ticks += get_ticks() - current()->task_stats.elapsed_total_ticks;
+	t->task_stats.elapsed_total_ticks = get_ticks();
+}
+
 /* sched_next_rr - selects next process to execute and invokes context switch. */
 void sched_next_rr(){
 	struct list_head *e;
 	struct task_struct *t;
+
 	if (list_empty(&readyqueue)) {
-		t=idle_task;
+		t = idle_task;
 	} else {
-		e=list_first(&readyqueue);
+		e = list_first(&readyqueue);
 		list_del(e);
-		t=list_head_to_task_struct(e);
+		t = list_head_to_task_struct(e);
 	}
+
+	t->state = ST_RUN;
 
 	ticks_count = t->quantum;
 
@@ -204,22 +224,10 @@ void sched_next_rr(){
 	task_switch((union task_union*)t);
 }
 
-/* update_process_state_rr - update current state of process to new state */
-void update_process_state_rr(struct task_struct *t, struct list_head *dest){
-	if (current() != t) list_del(&(t->list));
-	if (dest != NULL){
-		list_add_tail(&(t->list), dest);
-	}
-
-	current()->task_stats.system_ticks += get_ticks() - current()->task_stats.elapsed_total_ticks;
-	t->task_stats.elapsed_total_ticks = get_ticks();
-}
-
 /* needs_sched_rr - decides if it is necessary to change current process */
 int needs_sched_rr(){
 	if (ticks_count <= 0) return 1;
 	else return 0;
-
 }
 
 /* update_sched_data_rr - updates relevant info to take scheduling decisions */

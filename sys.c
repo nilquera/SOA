@@ -79,11 +79,9 @@ int sys_fork()
 	child_tu->stack[KERNEL_STACK_SIZE-20] = 0;
 	child_ts->kernel_ebp = &(child_tu->stack[KERNEL_STACK_SIZE-20]);
 
-	// al ctx hw també hem de canviar l'esp??? NO, perquè l'esp apunta a la mateixa adreça
-	// lògica tant al pare com al fill (és a quan es mapegen a física que son adreces diferents).
-
 	// Insert child process to ready queue
 	list_add_tail(&(child_ts->list), &readyqueue);
+	child_ts->state=ST_READY;
 
 	return child_ts->PID;
 }

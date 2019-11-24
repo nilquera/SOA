@@ -31,6 +31,7 @@ struct task_struct {
   struct list_head list;
   int quantum;
   struct stats task_stats;
+  enum state_t state;
 };
 
 union task_union {
