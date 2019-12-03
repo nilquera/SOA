@@ -17,7 +17,34 @@
 
 int
 createServerSocket (int port)
-{
+{  
+  int socket_fd;
+  int ret;
+
+  //creates the virtual device for accessing the socket
+  socket_fd = socket (AF_INET, SOCK_STREAM, 0);
+  if (socket_fd < 0) return socket_fd;
+
+  struct sockaddr_in my_addr; 
+  my_addr.sin_family = AF_INET; 
+  my_addr.sin_addr.s_addr = INADDR_ANY; 
+
+  my_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+  my_addr.sin_port = htons(port); 
+
+  if (bind(socket_fd, (struct sockaddr*) &my_addr, sizeof(my_addr)) == 0) 
+      printf("Binded Correctly\n"); 
+  else {
+      printf("Unable to bind\n"); 
+      return -1;
+  }
+  if (listen(socket_fd, 3) == 0){
+      printf("Listening ...\n"); 
+      return socket_fd;
+  } else {
+      printf("Unable to listen\n"); 
+      return -1;
+  }
 }
 
 
@@ -29,7 +56,14 @@ createServerSocket (int port)
 int
 acceptNewConnections (int socket_fd)
 {
-
+  struct sockaddr peer_addr;                                                                                                          
+  socklen_t peer_addr_size = sizeof(struct sockaddr);  
+  int acc = accept(socket_fd, &peer_addr, &peer_addr_size);
+  if(acc > 0)                                                                                                                                       
+    printf("Accepted\n");                                                                                                          
+  else                                                                                                                                                
+    printf("Not accepted\n");
+  return acc;
 }
 
 // Returns the socket virtual device that the client should use to access 
@@ -69,7 +103,7 @@ clientConnection (char *host_name, int port)
 
   ret = connect (socket_fd, (struct sockaddr *) &serv_addr, sizeof (serv_addr));
   if (ret < 0)
-  {
+  { 
 	  close (socket_fd);
 	  return (ret);
   } 
