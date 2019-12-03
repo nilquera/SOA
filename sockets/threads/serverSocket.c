@@ -2,26 +2,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
+#include <pthread.h>
+#include "queue.h"
+#include <semaphore.h>
 
 
 
 
-doServiceFork(int fd){
-	int ret = fork();
-	switch(ret){
-		case 0:
-			doService(fd);
-			exit(0);
-			break;
-		case -1:
-			perror("Couldn't create child");
-			break;
-		default:
-		 	break;
-	}
-}
-
-doService(int fd) {
+void* doService(void *fd) {
 int i = 0;
 char buff[80];
 char buff2[80];
@@ -48,6 +36,30 @@ int socket_fd = (int) fd;
 	write(1, buff2, strlen(buff2));
 }
 
+sem_t sem;
+struct Queue *peticions;
+
+void waitJobs (){
+	while(1) {
+		sem_wait(&sem);
+		if (!isEmpty(peticions)){
+			int fd = dequeue(peticions);
+			sem_post(&sem);
+			doService(fd);			
+		}
+	}
+}
+
+void init(){
+	peticions = createQueue(1000);
+	sem_init(&sem, 0, 1);
+	for (int i = 0; i < 10; ++i){
+		if (pthread_create(NULL, NULL, waitJobs, NULL) < 0){
+			perror ("Error creating thread");
+			exit(1);
+		}
+	}
+}
 
 main (int argc, char *argv[])
 {
@@ -71,7 +83,7 @@ main (int argc, char *argv[])
       perror ("Error creating socket\n");
       exit (1);
     }
-
+    init();
   while(1){
 		  connectionFD = acceptNewConnections (socketFD);
 		  if (connectionFD < 0)
@@ -81,6 +93,9 @@ main (int argc, char *argv[])
 			  exit (1);
 		  }
 
-		  doServiceFork(connectionFD);
+		  if(!isFull(peticions)) {
+		  	enqueue(peticions, connectionFD);
+		  }
+		  //doServiceThread(connectionFD);
 	}
 }

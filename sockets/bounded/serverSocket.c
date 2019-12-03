@@ -3,8 +3,13 @@
 #include <stdio.h>
 #include <signal.h>
 
+int max_concurrent = 3;
+int current_concurrent = 0;
 
-
+void trat_sigchld (int signum) {
+	while (waitpid(-1, NULL, WNOHANG) > 0)
+		current_concurrent--;
+}
 
 doServiceFork(int fd){
 	int ret = fork();
@@ -57,6 +62,8 @@ main (int argc, char *argv[])
   int ret;
   int port;
 
+  signal(SIGCHLD,trat_sigchld);
+
   if (argc != 2)
     {
       strcpy (buffer, "Usage: ServerSocket PortNumber\n");
@@ -73,7 +80,9 @@ main (int argc, char *argv[])
     }
 
   while(1){
+	  if (current_concurrent < max_concurrent) {
 		  connectionFD = acceptNewConnections (socketFD);
+		  ++current_concurrent;
 		  if (connectionFD < 0)
 		  {
 			  perror ("Error establishing connection \n");
@@ -82,5 +91,6 @@ main (int argc, char *argv[])
 		  }
 
 		  doServiceFork(connectionFD);
-	}
+	  }
+  }
 }
