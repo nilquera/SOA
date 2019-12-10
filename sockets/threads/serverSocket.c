@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include "queue.h"
 #include <semaphore.h>
-
+#include <sys/types.h>
 
 
 
@@ -46,6 +46,8 @@ void waitJobs (){
 			int fd = dequeue(peticions);
 			sem_post(&sem);
 			doService(fd);			
+		} else {
+			sem_post(&sem);
 		}
 	}
 }
@@ -54,14 +56,15 @@ void init(){
 	peticions = createQueue(1000);
 	sem_init(&sem, 0, 1);
 	for (int i = 0; i < 10; ++i){
-		if (pthread_create(NULL, NULL, waitJobs, NULL) < 0){
+		pthread_t nom;
+		if (pthread_create(&nom, NULL, (void * (*)(void *)) waitJobs, NULL) < 0){
 			perror ("Error creating thread");
 			exit(1);
 		}
 	}
 }
 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
   int socketFD;
   int connectionFD;
@@ -83,7 +86,9 @@ main (int argc, char *argv[])
       perror ("Error creating socket\n");
       exit (1);
     }
+    
     init();
+
   while(1){
 		  connectionFD = acceptNewConnections (socketFD);
 		  if (connectionFD < 0)
@@ -92,9 +97,10 @@ main (int argc, char *argv[])
 			  deleteSocket(socketFD);
 			  exit (1);
 		  }
-
 		  if(!isFull(peticions)) {
+		  	//sem_wait(&sem);
 		  	enqueue(peticions, connectionFD);
+		  	//sem_post(&sem);
 		  }
 		  //doServiceThread(connectionFD);
 	}
