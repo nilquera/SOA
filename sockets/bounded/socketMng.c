@@ -18,26 +18,22 @@
 int
 createServerSocket (int port)
 {  
-  int socket_fd;
-  int ret;
-
-  //creates the virtual device for accessing the socket
-  socket_fd = socket (AF_INET, SOCK_STREAM, 0);
-  if (socket_fd < 0) return socket_fd;
+  int socket_fd = socket (AF_INET, SOCK_STREAM, 0);
+  if (socket_fd < 0){
+    printf("Unable to create socket\n");
+    return -1;
+  }
 
   struct sockaddr_in my_addr; 
   my_addr.sin_family = AF_INET; 
-  my_addr.sin_addr.s_addr = INADDR_ANY; 
-
   my_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
   my_addr.sin_port = htons(port); 
 
-  if (bind(socket_fd, (struct sockaddr*) &my_addr, sizeof(my_addr)) == 0) 
-      printf("Binded Correctly\n"); 
-  else {
+  if (bind(socket_fd, (struct sockaddr*) &my_addr, sizeof(my_addr)) < 0){
       printf("Unable to bind\n"); 
       return -1;
   }
+  
   if (listen(socket_fd, 3) == 0){
       printf("Listening ...\n"); 
       return socket_fd;
