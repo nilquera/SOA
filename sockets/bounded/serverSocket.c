@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-int max_concurrent = 3;
+int max_concurrent = 10;
 int current_concurrent = 0;
 
 void trat_sigchld (int signum) {

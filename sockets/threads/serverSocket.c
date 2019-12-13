@@ -55,7 +55,7 @@ void waitJobs (){
 void init(){
 	peticions = createQueue(1000);
 	sem_init(&sem, 0, 1);
-	for (int i = 0; i < 10; ++i){
+	for (int i = 0; i < 100; ++i){
 		pthread_t nom;
 		if (pthread_create(&nom, NULL, (void * (*)(void *)) waitJobs, NULL) < 0){
 			perror ("Error creating thread");
@@ -98,10 +98,7 @@ int main (int argc, char *argv[])
 			  exit (1);
 		  }
 		  if(!isFull(peticions)) {
-		  	//sem_wait(&sem);
 		  	enqueue(peticions, connectionFD);
-		  	//sem_post(&sem);
 		  }
-		  //doServiceThread(connectionFD);
 	}
 }
