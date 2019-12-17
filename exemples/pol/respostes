@@ -1,0 +1,64 @@
+a)  - socket() para crear el socket
+	- bind() para darle ip y puerto
+	- listen() para configurarlo
+	- accept() para aceptar una conexion
+
+b)	- socket()
+	- conect() para conectarse al servidor
+
+c) 	connectionFD = accept()
+	if (connectionFD < 0){
+		perror ("Error establishing connection \n");
+		deleteSocket(socketFD);
+		exit (1);
+	}
+	filepath = ./file-connectionFD
+	int fileFD = open(filepath, O_WRONLY | O_CREAT, S_IRWXU)
+
+	ret = read(connectionFD, buff, buffsize)
+	while (ret > 0) {
+		write(fileFD, buff, buffsize)
+	}
+
+d) 	connectionFD = connect()
+	if (connectionFD < 0){
+		perror ("Error establishing connection\n");
+		exit (1);
+    }
+
+    int fileFD = open(filepath, O_RDONLY)
+    ret = read(filepath, buff, sizeof(buff))
+    while (ret > 0){
+    	write(connectionFD, buff, sizeofbuff)
+    }
+
+e)  
+	concurrent = 0;
+	max_concurrent = 10;
+
+	rutinahijo(){
+		--concurrent;
+	}
+
+	doServiceFork(connFD){
+		int fileFD = open(filepath, O_RDONLY)
+	    ret = read(filepath, buff, sizeof(buff))
+	    while (ret > 0){
+	    	write(connectionFD, buff, sizeofbuff)
+	    }
+	}
+
+	doService(connFD){
+		if (concurrent == max_concurrent) return;
+		int cid = fork();
+		switch (cid){
+			case 0:
+				doServiceFork(connFD)
+				exit(0)
+			case -1:
+				error
+				break
+			default:
+				++concurrent
+		}
+	}
