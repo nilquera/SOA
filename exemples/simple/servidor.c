@@ -1,6 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void doService(int fd){
+	char buff[80];
+	int ret = read(fd, buff, sizeof(buff));
+	while (ret > 0){
+		printf("%s", buff);
+		ret = read(fd, buff, sizeof(buff));
+	}
+
+	if (ret < 0){
+		perror ("Error reading from socket");
+	}
+	
+}
+
 int main(int argc, char **argv){
 	int port;
 	int socketFD;
@@ -16,5 +30,6 @@ int main(int argc, char **argv){
 			deleteSocket(socketFD);
 			exit (1);
 		}
+		doService(connectionFD);
  	}
 }

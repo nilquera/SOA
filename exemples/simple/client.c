@@ -14,4 +14,10 @@ int main(int argc, char *argv[]){
 		perror ("Error establishing connection\n");
 		exit (1);
     }
+
+    if (write(connectionFD, "soc el client\n", strlen("soc el client\n")) == -1){
+    	printf("Could't write to server\n");
+    	exit (1);
+    }
+
 }
